@@ -39,8 +39,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
-import com.shatteredpixel.shatteredpixeldungeon.ui.Toolbar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
@@ -49,7 +49,6 @@ import com.watabou.glwrap.Blending;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
-import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Music;
 import com.watabou.utils.ColorMath;
@@ -209,7 +208,7 @@ public class TitleScene extends PixelScene {
 			btnAbout.setRect(btnSettings.right()+2, btnSettings.top(), btnBadges.width(), BTN_HEIGHT);
 		}
 
-        StyledButton btnLocalization = new LocalizationButton(GREY_TR, "翻译声明");
+        StyledButton btnLocalization = new LocalizationButton(GREY_TR, "译者注");
         add(btnLocalization);
         btnLocalization.setRect(0, h - BTN_HEIGHT, 50, BTN_HEIGHT);
 
@@ -383,38 +382,51 @@ public class TitleScene extends PixelScene {
 
         @Override
         protected void onClick() {
-            ShatteredPixelDungeon.scene().add(new WndLocalization(
-                    "译者的话\n\n" +
-                            "_介是个嘛玩意儿？_\n" +
-                            "ReARrangedPixelDungeon，枪火地牢重置版，简称rar地牢（zip：？）。由于作者cocoa在枪火地牢（以下简写为ar地牢）里复制粘贴了海量代码导致结构极其臃肿，在痛定思痛/闲的没事/想再加新东西发现要复制粘贴的越来越多，另起炉灶，用新的代码架构（不等于更少的bug）来实现ar地牢的内容，同时对ar地牢一些起码作者觉得不好的东西进行优化和平衡。目前距离ar地牢的完整功能还有一定距离（骑士和护士职业）但由于作者不大可能回头去ar地牢，因此在可预见的将来仍然在更新。\n\n" +
-                            "_咋现在才有翻译？_\n" +
-                            "作者毕竟是韩国人，翻译人员的英语能力可能还可以达到一般水平，但韩语基本上两眼一抹黑。实际上本次翻译也是在机翻韩语+查看作者机翻韩语出来的英语+代码反向分析+参考ar地牢翻译完成的。鸽人能力有限，翻译工作量大且时间仓促，难以面面俱到，恐怕到处都是疏漏之处，如有意见与反馈，请通过下方联系方式接洽。由于个人时间有限而且rar将来肯定会更新，后续工作仍然存在人手缺乏问题，如有意向协助翻译，亦可通过联系方式讨论具体事宜。\n" +
-                            "QQ：1015561267 \n" +
-                            "QQ群号（像素地牢贴吧官方三群）：46065540\n" +
-                            "github项目地址：https://github.com/1015561267/Re-ARranged-Pixel-Dungeon-CN\n\n" +
-                            "_所以说这么多是要干嘛？_\n" +
-                            "在游玩中可能会发现实际效果与文本描述有所出入（实际上作者已经这么干过不知道多少回了），但译者仅进行翻译工作，程序性bug不在职责范围之内。左下角子页面列出当前版本（3.3.0）的已知bug，作为免责声明。\n\n"+
-                            "by _Teller_\n"
-            ));
+            ShatteredPixelDungeon.scene().add(new WndLocalization());
         }
 
-        private class WndLocalization extends WndMessage {
-            public WndLocalization(String text) {
-                super(text);
+        private static class WndLocalization extends Window {
 
-                final int BTN_HEIGHT = 20;
+            private static final int WIDTH_P = 120;
+            private static final int WIDTH_L = 144;
+            private static final int MARGIN = 4;
+
+            private static final int BTN_HEIGHT = 20;
+
+            public WndLocalization() {
+                super();
+
+                String text =  "_介是个嘛玩意儿？_\n" +
+                        "ReARrangedPixelDungeon，枪火地牢重置版，简称rar地牢(zip:?)。由于作者cocoa在枪火地牢(以下简写为ar地牢)里复制粘贴了海量代码导致结构极其臃肿，在痛定思痛/闲的没事/想再加新的发现要cv的越来越多后，决定另起炉灶，用新的代码架构(不等于更少的bug)来实现ar地牢的内容，同时对ar一些起码作者觉得不好的东西进行优化和平衡。目前距离ar地牢的完整功能还有一定距离(骑士和护士)，但在可预见的将来会有更新。\n" +
+                        "_咋现在才有翻译？_\n" +
+                        "作者毕竟是韩国人，翻译人员的英语能力可能还可以达到一般水平，但韩语基本上两眼一抹黑。实际上本次翻译也是在机翻韩语+查看作者机翻韩语出来的英语+代码反向分析+参考ar地牢翻译完成的。鸽人能力有限，翻译工作量大且时间仓促，难以面面俱到，恐怕到处都是疏漏之处，如有意见与反馈，请通过下方联系方式接洽。由于个人时间有限而且rar将来肯定会更新，后续工作仍然存在人手缺乏问题，如有意向协助翻译，亦可通过联系方式讨论具体事宜。\n" +
+                        "QQ：1015561267 \n" +
+                        "QQ群号（像素地牢贴吧官方三群）：46065540\n" +
+                        "github项目地址：https://github.com/1015561267/Re-ARranged-Pixel-Dungeon-CN\n" +
+                        "_所以说这么多是要干嘛？_\n" +
+                        "在游玩中可能会发现实际效果与文本描述有所出入（实际上作者已经这么干过不知道多少回了），但译者仅进行翻译工作，程序性bug不在职责范围之内。左下角子页面列出当前版本（3.3.0）的已知bug，作为免责声明。\n"+
+                        "————by _Teller_\n";
+
+                RenderedTextBlock info = PixelScene.renderTextBlock( text, 6 );
+                info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
+                info.setPos(MARGIN, MARGIN);
+                add( info );
 
                 RedButton bugButton = new BugButton("bug");
                 add(bugButton);
-                bugButton.setRect(0, height - BTN_HEIGHT, 50, BTN_HEIGHT);
+                bugButton.setRect(0, info.height() + MARGIN, 50, BTN_HEIGHT);
 
                 RedButton recipeButton =  new RecipeButton("???");
                 add(recipeButton);
-                recipeButton.setRect(width - 50, height - BTN_HEIGHT, 50, BTN_HEIGHT);
+                recipeButton.setRect(info.width() - MARGIN - 50, info.height() + MARGIN, 50, BTN_HEIGHT);
+
+                resize(
+                        (int) (info.width() + MARGIN * 2),
+                        (int) (info.height() + BTN_HEIGHT + MARGIN * 3));
             }
 
 
-            private class BugButton extends RedButton {
+            private static class BugButton extends RedButton {
                 public BugButton(String text) {
                     super(text);
                 }
@@ -434,12 +446,14 @@ public class TitleScene extends PixelScene {
                                     "- 高级制造的枪支附魔概率没有增加\n" +
                                     "- 复春之书的显示和效果不一致，植物生成数量很难达到期望值\n" +
                                     "- 砍刀在对超出距离的非敌方单位使用时没有效果，但饥饿值会-1\n" +
-                                    "- 砍刀砍草并不会减少饥饿值因为扣的语句被错误地写在了上一句的情况里\n"
+                                    "- 砍刀砍草并不会减少饥饿值因为扣的语句被错误地写在了上一句的情况里\n"+
+                                    "- 陈旧护符只能对女猎的弓，探险家的铲子或砍刀，以及决斗的任意非枪械近战使用，其他的作者还没做\n"+
+                                    "- 还有一个不能算bug的bug：解锁武士需要的武士刀并不包括evan破碎原版的武士刀。（what can I say）\n"
                     ));
                 }
             }
 
-            private class RecipeButton extends RedButton {
+            private static class RecipeButton extends RedButton {
                 public RecipeButton(String text) {
                     super(text);
                 }
