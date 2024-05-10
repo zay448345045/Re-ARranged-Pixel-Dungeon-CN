@@ -14,14 +14,14 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'Rearranged Pixel Dungeon'
-        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungon'
+        appName = 'Rearranged Pixel Dungeon CN'
+        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungoncn'
 
         appVersionCode = 768
         appVersionName = '2.3.2'
         //for arranged version code and version name
         appVersionCode += 16
-        appVersionName += '_based_3.3.0'
+        appVersionName += '_based_3.3.0_cn'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
