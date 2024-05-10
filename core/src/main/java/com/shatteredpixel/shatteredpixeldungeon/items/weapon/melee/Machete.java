@@ -125,8 +125,8 @@ public class Machete extends MeleeWeapon {
         }
         if (count > 0) {
             Rope rope = new Rope();
-            if (hero.hasTalent(Talent.ROPE_COLLECTER)) {
-                count = Math.round(count*(1.1f+0.1f*hero.pointsInTalent(Talent.ROPE_COLLECTER)));
+            if (hero.hasTalent(Talent.ROPE_COLLECTOR)) {
+                count = Math.round(count*(1.1f+0.1f*hero.pointsInTalent(Talent.ROPE_COLLECTOR)));
             }
             rope.quantity(count);
             if (rope.doPickUp( Dungeon.hero )) {

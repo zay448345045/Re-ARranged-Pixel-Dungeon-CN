@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.DeviceCompat;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -66,6 +67,9 @@ public class TalentsPane extends ScrollPane {
 			} else {
 				tiersAvailable = Talent.MAX_TALENT_TIERS;
 			}
+            if (DeviceCompat.isDebug()) {
+                tiersAvailable = Talent.MAX_TALENT_TIERS;
+            }
 		} else {
 			while (tiersAvailable < Talent.MAX_TALENT_TIERS
 					&& Dungeon.hero.lvl+1 >= Talent.tierLevelThresholds[tiersAvailable+1]){

@@ -38,14 +38,18 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Toolbar;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSettings;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Music;
 import com.watabou.utils.ColorMath;
@@ -204,6 +208,10 @@ public class TitleScene extends PixelScene {
 			btnSettings.setRect(btnBadges.left(), btnBadges.bottom()+GAP, btnBadges.width(), BTN_HEIGHT);
 			btnAbout.setRect(btnSettings.right()+2, btnSettings.top(), btnBadges.width(), BTN_HEIGHT);
 		}
+
+        StyledButton btnLocalization = new LocalizationButton(GREY_TR, "翻译声明");
+        add(btnLocalization);
+        btnLocalization.setRect(0, h - BTN_HEIGHT, 50, BTN_HEIGHT);
 
 		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
 		version.measure();
@@ -366,4 +374,106 @@ public class TitleScene extends PixelScene {
 			ShatteredPixelDungeon.switchNoFade(SupporterScene.class);
 		}
 	}
+
+    private static class LocalizationButton extends StyledButton {
+        public LocalizationButton(Chrome.Type type, String label) {
+            super(type, label);
+            icon(Icons.get(Icons.LANGS));
+        }
+
+        @Override
+        protected void onClick() {
+            ShatteredPixelDungeon.scene().add(new WndLocalization(
+                    "译者的话\n\n" +
+                            "_介是个嘛玩意儿？_\n" +
+                            "ReARrangedPixelDungeon，枪火地牢重置版，简称rar地牢（zip：？）。由于作者cocoa在枪火地牢（以下简写为ar地牢）里复制粘贴了海量代码导致结构极其臃肿，在痛定思痛/闲的没事/想再加新东西发现要复制粘贴的越来越多，另起炉灶，用新的代码架构（不等于更少的bug）来实现ar地牢的内容，同时对ar地牢一些起码作者觉得不好的东西进行优化和平衡。目前距离ar地牢的完整功能还有一定距离（骑士和护士职业）但由于作者不大可能回头去ar地牢，因此在可预见的将来仍然在更新。\n\n" +
+                            "_咋现在才有翻译？_\n" +
+                            "作者毕竟是韩国人，翻译人员的英语能力可能还可以达到一般水平，但韩语基本上两眼一抹黑。实际上本次翻译也是在机翻韩语+查看作者机翻韩语出来的英语+代码反向分析+参考ar地牢翻译完成的。鸽人能力有限，翻译工作量大且时间仓促，难以面面俱到，恐怕到处都是疏漏之处，如有意见与反馈，请通过下方联系方式接洽。由于个人时间有限而且rar将来肯定会更新，后续工作仍然存在人手缺乏问题，如有意向协助翻译，亦可通过联系方式讨论具体事宜。\n" +
+                            "QQ：1015561267 \n" +
+                            "QQ群号（像素地牢贴吧官方三群）：46065540\n" +
+                            "github项目地址：\n\n" +
+                            "_所以说这么多是要干嘛？_\n" +
+                            "在游玩中可能会发现实际效果与文本描述有所出入（实际上作者已经这么干过不知道多少回了），但译者仅进行翻译工作，程序性bug不在职责范围之内。左下角子页面列出当前版本（3.3.0）的已知bug，作为免责声明。\n\n"+
+                            "by _Teller_\n"
+            ));
+        }
+
+        private class WndLocalization extends WndMessage {
+            public WndLocalization(String text) {
+                super(text);
+
+                final int BTN_HEIGHT = 20;
+
+                RedButton bugButton = new BugButton("bug");
+                add(bugButton);
+                bugButton.setRect(0, height - BTN_HEIGHT, 50, BTN_HEIGHT);
+
+                RedButton recipeButton =  new RecipeButton("???");
+                add(recipeButton);
+                recipeButton.setRect(width - 50, height - BTN_HEIGHT, 50, BTN_HEIGHT);
+            }
+
+
+            private class BugButton extends RedButton {
+                public BugButton(String text) {
+                    super(text);
+                }
+
+                @Override
+                protected void onClick() {
+                    ShatteredPixelDungeon.scene().add(new WndMessage(
+                            "以下内容经过代码分析与实际游玩确认存在，与翻译无关，以当前版本（3.3.0）为准，不排除随着后续更新而修复的可能。\n\n" +
+                                    "- 战法3-6的魔法阵+1不提供任何效果\n" +
+                                    "- 双持匕首的武技姿态是5回合而非6回合\n" +
+                                    "- 英雄之剑的剑舞是4回合，代码里写的备注4回合但韩语原文里确实是6回合（说真的我没有仔细看代码，恐怕类似情况广泛存在）\n" +
+                                    "- 大师的3-5天赋没有效果\n" +
+                                    "- 工程师的迫击炮+2无效，而加农炮的+2同时影响了加农炮和迫击炮（cocoa写的天赋多，天赋效果贴岔的也多）\n" +
+                                    "- 探索者的藤条大师天赋效果非常混乱，藤条可以拖敌人和地形移动，但+1 +2仅对拖敌人有用\n" +
+                                    "- 探索者的藤条收集，资源文件里天赋名是ropecollector但代码里是ropecollecter造成韩语文本都出现ntf，已修复\n" +
+                                    "- 探索者的藤条束缚仍然会消耗，而且由于程序次序问题，在不足5根藤条的情况下对邻近敌人使用会无限反复触发2-5\n" +
+                                    "- 高级制造的枪支附魔概率没有增加\n" +
+                                    "- 复春之书的显示和效果不一致，植物生成数量很难达到期望值\n" +
+                                    "- 砍刀在对超出距离的非敌方单位使用时没有效果，但饥饿值会-1\n" +
+                                    "- 砍刀砍草并不会减少饥饿值因为扣的语句被错误地写在了上一句的情况里\n"
+                    ));
+                }
+            }
+
+            private class RecipeButton extends RedButton {
+                public RecipeButton(String text) {
+                    super(text);
+                }
+
+                @Override
+                protected void onClick() {
+                    ShatteredPixelDungeon.scene().add(new WndMessage(
+                                    "以下内容可能破坏作者提供的解谜体验。\n" +
+                                    "不知出于何种原因，cocoa移除了炼金武器页面内大量炼金武器配方（它可能忘了加回去），但实际上这些东西是可以在炼金里制作出来的，因此在此列出，作为参考，内容来源于源码分析。\n" +
+                                    "- 矛与盾 = 长矛 + 圆盾 + 进化菱晶\n" +
+                                    "- 真符之刃 = 符文之刃 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 无形之刃 = 暗杀之刃 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 链鞭 = 长鞭 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 链锤 = 链鞭 + 链枷 + 进化菱晶\n" +
+                                    "- 撒旦圣经 = 圣经 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 刺杀之矛 = 关刀 + 暗杀之刃 + 进化菱晶\n" +
+                                    "- 力量手套 = 魔岩拳套 + 震爆方石 + 进化菱晶\n" +
+                                    "- 工匠之锤 = 战锤 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 村正 = 太刀 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 巨型双剑 = 巨剑 + 巨剑 + 进化菱晶\n" +
+                                    "- 阔剑 = 巨剑 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 沉重的剑（力量24后变成圣剑）= 圣经 + 阔剑 + 进化菱晶\n" +
+                                    "- 黑曜石盾 = 巨型方盾 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 骑枪 = 关刀 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 骑枪与黑盾 = 骑枪 + 黑曜石护盾 + 进化菱晶\n" +
+                                    "- 战术手枪 = 强化手枪 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 战术火箭筒 = 强化火箭筒 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 战术狙击枪 = 强化狙击枪 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 战术榴弹发射器 = 强化榴弹发射器 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 战术突击步枪 = 强化突击步枪 + 升级催化剂 + 进化菱晶\n"+
+                                    "- 防弹盾 = 战术手枪 + 黑曜石盾 + 进化菱晶\n"
+                    ));
+                }
+            }
+        }
+    }
 }
