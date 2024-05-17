@@ -94,6 +94,8 @@ abstract public class MissileWeapon extends Weapon {
 	
 	@Override
 	public int max() {
+        int i = buffedLvl();
+        int j = RingOfSharpshooting.levelDamageBonus(Dungeon.hero);
 		return Math.max(0, max( buffedLvl() + RingOfSharpshooting.levelDamageBonus(Dungeon.hero) ));
 	}
 	

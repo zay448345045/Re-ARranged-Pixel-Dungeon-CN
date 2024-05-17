@@ -518,7 +518,7 @@ public class Hero extends Char {
 
 		//temporarily set the hero's weapon to the missile weapon being used
 		//TODO improve this!
-		belongings.thrownWeapon = wep;
+ 		belongings.thrownWeapon = wep;
 		boolean hit = attack( enemy );
 		Invisibility.dispel();
 		belongings.thrownWeapon = null;
