@@ -75,6 +75,7 @@ public class SeedFindScene extends PixelScene {
 				} else {
 					up_to_floor = "floor end";
 				}
+
 				String strFloor;
 				if (Messages.lang() == Languages.KOREAN) {
 					strFloor = "층";
