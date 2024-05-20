@@ -15,7 +15,7 @@ allprojects {
 
     ext {
         appName = 'Rearranged Pixel Dungeon CN'
-        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungon'
+        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungoncn'
 
         appVersionCode = 768
         appVersionName = '2.3.2'
