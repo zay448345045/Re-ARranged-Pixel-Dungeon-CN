@@ -44,4 +44,18 @@ public class WndMessage extends Window {
 			(int)info.width() + MARGIN * 2,
 			(int)info.height() + MARGIN * 2 );
 	}
+
+    public WndMessage( String text , int size) {
+
+        super();
+
+        RenderedTextBlock info = PixelScene.renderTextBlock( text, size );
+        info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
+        info.setPos(MARGIN, MARGIN);
+        add( info );
+
+        resize(
+                (int)info.width() + MARGIN * 2,
+                (int)info.height() + MARGIN * 2 );
+    }
 }
