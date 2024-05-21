@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.LiquidMetal;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLevitation;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -45,6 +46,7 @@ public class UpgradeDust extends Spell {
 	
 	{
 		image = ItemSpriteSheet.UPGRADE_DUST;
+		talentChance = 1/(float) Recipe.OUT_QUANTITY;
 	}
 	
 	@Override
@@ -147,19 +149,26 @@ public class UpgradeDust extends Spell {
 	@Override
 	public int value() {
 		//prices of ingredients, divided by output quantity
-		return (40 + 40)/quantity;
+		return Math.round((40 + 30)/(float) Recipe.OUT_QUANTITY);
+	}
+
+	@Override
+	public int energyVal() {
+		return (int)(17 * (quantity/(float) Recipe.OUT_QUANTITY));
 	}
 
 	public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
 
+		private static final int OUT_QUANTITY = 3;
+
 		{
-			inputs =  new Class[]{LiquidMetal.class};
+			inputs =  new Class[]{LiquidMetal.class, StoneOfAugmentation.class};
 			inQuantity = new int[]{40, 1};
 
-			cost = 11;
+			cost = 4;
 
 			output = UpgradeDust.class;
-			outQuantity = 2;
+			outQuantity = 3;
 		}
 
 	}
