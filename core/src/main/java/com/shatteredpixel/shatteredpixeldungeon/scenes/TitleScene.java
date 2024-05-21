@@ -435,6 +435,7 @@ public class TitleScene extends PixelScene {
                 protected void onClick() {
                     ShatteredPixelDungeon.scene().add(new WndMessage(
                             "以下内容经过代码分析与实际游玩确认存在，与翻译无关，以当前版本(3.6.0)为准，不排除随着后续更新而修复的可能。\n\n" +
+                                    "- _由于evan基本重做了决斗家的武技系统而cocoa无脑merge_冠军勇士的充能加速和双剑合璧+1没有效果。\n" +
                                     "- 战法3-6的魔法阵+1不提供任何效果\n" +
                                     "- 格斗家的无阻腕动可以影响包括投掷武器的一切物理攻击\n" +
                                     "- 战术猎弓升级无法增加伤害(ba泉奈bug同款)\n" +
