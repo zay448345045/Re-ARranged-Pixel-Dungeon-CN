@@ -347,7 +347,7 @@ public class Teleporter extends Item {
                     GLog.i(""+SuspiciousKey.additionalRoomsThisRun_3[i] + ", ");
                 }
                 GLog.newLine();
-                GLog.i("현재 비밀방 개수: " + secretRooms[Dungeon.depth]);
+                GLog.i("当前密室数量: " + secretRooms[Dungeon.depth]);
             }
         }
     }
