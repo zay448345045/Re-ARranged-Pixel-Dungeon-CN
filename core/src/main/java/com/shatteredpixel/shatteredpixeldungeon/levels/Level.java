@@ -73,25 +73,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfBlast;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfCorrosion;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfCorruption;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfDisintegration;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfEarth;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfFire;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfFrost;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfLight;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfMagic;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfRegrowth;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfThunderBolt;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfTransfusion;
-import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfWarding;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.CrystalBall;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.DimensionalSundial;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.EyeOfNewt;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.MimicTooth;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.MossyClump;
-import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.DimensionalSundial;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrapMechanism;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
@@ -1510,7 +1498,6 @@ public abstract class Level implements Bundlable {
 				if (!heap.seen && fieldOfView[heap.pos])
 					heap.seen = true;
 		}
-
 	}
 
 	public boolean isLevelExplored( int depth ){
@@ -1660,5 +1647,9 @@ public abstract class Level implements Bundlable {
 			default:
 				return "";
 		}
+	}
+
+	public static void mindVision(int pos) {
+		heroMindFov[pos] = true;
 	}
 }
