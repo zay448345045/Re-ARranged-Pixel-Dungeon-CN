@@ -14,8 +14,8 @@ buildscript {
 allprojects {
 
     ext {
-        appName = 'Rearranged Pixel Dungeon'
-        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungon'
+        appName = 'Rearranged Pixel Dungeon CN'
+        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungoncn'
 
         appVersionCode = 782
         appVersionName = '2.4.2'
@@ -30,7 +30,7 @@ allprojects {
 
         gdxVersion = '1.12.1'
         gdxControllersVersion = '2.2.4-SNAPSHOT'
-        robovmVersion = '2.3.21'
+        robovmVersion = '2.3.20'
     }
     version = appVersionName
 
