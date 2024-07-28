@@ -128,7 +128,7 @@ public class Pray extends Buff implements ActionIndicator.Action {
 //        }
 
         public void defenseProc(Char enemy, int damage) {
-            System.out.println("defenseProc 작동");
+            //System.out.println("defenseProc 작동");
             if (hero.hasTalent(Talent.JUDGEMENT)) {
                 Buff.affect(enemy, Talent.JudgementTracker.class, Talent.JudgementTracker.DURATION);
             }
