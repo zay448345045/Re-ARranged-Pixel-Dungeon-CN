@@ -407,6 +407,8 @@ public class TitleScene extends PixelScene {
                         "在游玩中可能会发现实际效果与文本描述有所出入(实际上作者已经这么干过不知道多少回了)，但译者仅进行翻译工作，程序性bug不在职责范围之内。左下角子页面列出当前版本（3.3.0）的已知bug，作为免责声明。\n"+
                         "——by _Teller_\n";
 
+                RenderedTextBlock.cnLocalizationFlag = true;
+
                 RenderedTextBlock info = PixelScene.renderTextBlock( text, 6 );
                 info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
                 info.setPos(MARGIN, MARGIN);
@@ -423,6 +425,8 @@ public class TitleScene extends PixelScene {
                 resize(
                         (int) (info.width() + MARGIN * 2),
                         (int) (info.height() + BTN_HEIGHT + MARGIN * 3));
+
+                RenderedTextBlock.cnLocalizationFlag = false;
             }
 
 
@@ -433,6 +437,7 @@ public class TitleScene extends PixelScene {
 
                 @Override
                 protected void onClick() {
+                    RenderedTextBlock.cnLocalizationFlag = true;
                     ShatteredPixelDungeon.scene().add(new WndMessage(
                             "- _陈旧护符只能对女猎弓，探险家铲子或砍刀，决斗任意非枪械近战或骑士盾使用，其他的作者还没做_\n"+
 
@@ -451,6 +456,7 @@ public class TitleScene extends PixelScene {
                                     "- 幽灵骑士3-5天赋效果如括号内，减伤效果莫名其妙写到3-4里面了但3-4原效果也有效。\n" +
                                     "- 还有一个不能算bug的bug：解锁武士需要的武士刀并不包括evan破碎原版的武士刀。(what can I say)\n" , 4
                     ));
+                    RenderedTextBlock.cnLocalizationFlag = false;
                 }
             }
 
@@ -461,6 +467,7 @@ public class TitleScene extends PixelScene {
 
                 @Override
                 protected void onClick() {
+                    RenderedTextBlock.cnLocalizationFlag = true;
                     ShatteredPixelDungeon.scene().add(new WndMessage(
                                     "_警告！_以下内容可能破坏作者提供的解谜体验\n\n" +
                                     "cocoa用武器蓝图替代了大量炼金武器配方，不过只有正确的近战武器组合才能出正确的蓝图，而且还要献祭一把手头的武器，还有概率失败。\n" +
@@ -488,6 +495,7 @@ public class TitleScene extends PixelScene {
                                     "- 战术突击步枪 = 强化突击步枪 + 升级催化剂 + 进化菱晶\n"+
                                     "- 防弹盾 = 战术手枪 + 黑曜石盾 + 进化菱晶\n"
                     ));
+                    RenderedTextBlock.cnLocalizationFlag = false;
                 }
             }
         }

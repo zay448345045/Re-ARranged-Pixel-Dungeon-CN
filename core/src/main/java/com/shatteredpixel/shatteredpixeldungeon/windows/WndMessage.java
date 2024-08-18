@@ -49,6 +49,8 @@ public class WndMessage extends Window {
 
         super();
 
+        RenderedTextBlock.cnLocalizationFlag = true;
+
         RenderedTextBlock info = PixelScene.renderTextBlock( text, size );
         info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
         info.setPos(MARGIN, MARGIN);
@@ -57,5 +59,7 @@ public class WndMessage extends Window {
         resize(
                 (int)info.width() + MARGIN * 2,
                 (int)info.height() + MARGIN * 2 );
+
+        RenderedTextBlock.cnLocalizationFlag = false;
     }
 }
