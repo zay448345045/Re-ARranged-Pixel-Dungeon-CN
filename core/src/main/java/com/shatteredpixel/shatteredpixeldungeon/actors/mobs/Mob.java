@@ -901,14 +901,14 @@ public abstract class Mob extends Char {
 			}
 
 			if (hero.hasTalent(Talent.ADRENALINE_SURGE)) {
-				Buff.prolong(hero, Adrenaline.class, 1+2*hero.pointsInTalent(Talent.ADRENALINE_SURGE));
+				Buff.prolong(hero, Adrenaline.class, 1+hero.pointsInTalent(Talent.ADRENALINE_SURGE));
 			}
 
 			if (hero.hasTalent(Talent.PRAY_FOR_DEAD)) {
 				Buff.affect(hero, Talent.PrayForDeadTracker.class, Talent.PrayForDeadTracker.DURATION);
 			}
 
-			if (hero.buff(HorseRiding.RidingCooldown.class) != null && (Dungeon.hero.lvl <= maxLvl + 2)) {
+			if (hero.buff(HorseRiding.RidingCooldown.class) != null && (Dungeon.hero.lvl <= maxLvl + 2 || Dungeon.hero.buff(AscensionChallenge.class) != null)) {
 				hero.buff(HorseRiding.RidingCooldown.class).kill();
 			}
 
@@ -936,15 +936,19 @@ public abstract class Mob extends Char {
 			}
 		}
 
-		if (this instanceof Wraith && Dungeon.isChallenged(Challenges.CURSED_DUNGEON) && Random.Float() < 0.2f) {
+		if (!(this instanceof Wraith) && Dungeon.isChallenged(Challenges.CURSED_DUNGEON) && Random.Float() < 0.5f) {
 			Wraith w = Wraith.spawnAt(pos, Wraith.class);
-			if (w != null) {
-				Buff.affect(w, Corruption.class);
-				if (Dungeon.level.heroFOV[pos]) {
-					CellEmitter.get(pos).burst(ShadowParticle.CURSE, 6);
-					Sample.INSTANCE.play(Assets.Sounds.CURSED);
-				}
+			if (Dungeon.level.heroFOV[pos]) {
+				CellEmitter.get(pos).burst(ShadowParticle.CURSE, 6);
+				Sample.INSTANCE.play(Assets.Sounds.CURSED);
 			}
+//			if (w != null) {
+//				Buff.affect(w, Corruption.class);
+//				if (Dungeon.level.heroFOV[pos]) {
+//					CellEmitter.get(pos).burst(ShadowParticle.CURSE, 6);
+//					Sample.INSTANCE.play(Assets.Sounds.CURSED);
+//				}
+//			}
 		}
 	}
 

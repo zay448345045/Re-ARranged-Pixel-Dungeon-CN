@@ -19,8 +19,8 @@ allprojects {
 
         appVersionCode = 782
         appVersionName = '2.4.2'
-        appVersionCode += 26
-        appVersionName += '_based_3.11.1_cn'
+        appVersionCode += 27
+        appVersionName += '_based_3.12.0_cn'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
@@ -30,7 +30,7 @@ allprojects {
 
         gdxVersion = '1.12.1'
         gdxControllersVersion = '2.2.4-SNAPSHOT'
-        robovmVersion = '2.3.20'
+        robovmVersion = '2.3.21'
     }
     version = appVersionName
 

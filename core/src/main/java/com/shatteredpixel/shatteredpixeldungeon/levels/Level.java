@@ -103,6 +103,7 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
+import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.BArray;
 import com.watabou.utils.Bundlable;
@@ -209,7 +210,7 @@ public abstract class Level implements Bundlable {
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 
 		if (!Dungeon.bossLevel() && Dungeon.branch == 2) {
-			addItemToSpawn(Generator.random(Generator.Category.FOOD));
+			addItemToSpawn(Generator.randomUsingDefaults(Generator.Category.FOOD));
 		}
 
 		//TODO maybe just make this part of RegularLevel?
@@ -353,6 +354,10 @@ public abstract class Level implements Bundlable {
 
 	public void playLevelMusic(){
 		//do nothing by default
+	}
+
+	public void playOldMusic() {
+		Music.INSTANCE.play(Assets.Music.OLD_THEME, true);
 	}
 	
 	@Override
@@ -892,10 +897,10 @@ public abstract class Level implements Bundlable {
 		switch (Random.Int(10)) {
 			case 0: prize = new ScrollOfTransmutation();
 				break;
-			case 1: prize = Generator.random(Generator.Category.SPELLBOOK);
+			case 1: prize = Generator.randomUsingDefaults(Generator.Category.SPELLBOOK);
 				break;
 			default:
-				prize = Generator.random(Generator.Category.SCROLL);
+				prize = Generator.randomUsingDefaults(Generator.Category.SCROLL);
 				break;
 		}
 		//if raw tile type is flammable or empty
@@ -904,7 +909,7 @@ public abstract class Level implements Bundlable {
 				|| (Terrain.flags[map[pos]] & Terrain.FLAMABLE) != 0) {
 			if (terr == Terrain.BOOKSHELF && Random.Float() < (1/20f)*RingOfWealth.dropChanceMultiplier( Dungeon.hero )) {
 				if (prize == null) { //this will never be activated, but this is used to prevent a crash in unpredicted case
-					prize = Generator.random(Generator.Category.SCROLL);
+					prize = Generator.randomUsingDefaults(Generator.Category.SCROLL);
 				}
 				Dungeon.level.drop(prize, pos).sprite.drop();
 			} //generates prize for 5% chance when a bookshelf has destroyed
