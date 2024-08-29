@@ -323,11 +323,6 @@ public class Gun extends MeleeWeapon {
 			quickReload();
 		}
 
-		if (hero.hasTalent(Talent.BULLET_SAVING) && hero.buff(Talent.BulletSavingCooldown.class) == null) {
-			manualReload(hero.pointsInTalent(Talent.BULLET_SAVING), true);
-			Buff.affect(hero, Talent.BulletSavingCooldown.class, 9f+reloadTime(hero));
-		}
-
 		hero.busy();
 		hero.sprite.operate(hero.pos);
 		Sample.INSTANCE.play(Assets.Sounds.UNLOCK);
@@ -426,6 +421,9 @@ public class Gun extends MeleeWeapon {
 
 		if (user == hero) {
 			amount -= hero.pointsInTalent(Talent.FAST_RELOAD);
+			if (((Hero)user).heroClass == HeroClass.GUNNER) {
+				amount -= 1;
+			}
 		}
 
 		amount = Math.max(0, amount);
@@ -459,7 +457,8 @@ public class Gun extends MeleeWeapon {
 	@Override
 	public int max(int lvl) {
 		int damage = 3*(tier()+1) +
-					 lvl*(tier()+1); //근접 무기로서의 최대 데미지
+					 lvl*(tier()+1) +
+					 Dungeon.hero.pointsInTalent(Talent.CLOSE_COMBAT); //근접 무기로서의 최대 데미지
 		return damage;
 
 	}
@@ -683,7 +682,7 @@ public class Gun extends MeleeWeapon {
 		public float delayFactor(Char user) {
 			float speed = Gun.this.delayFactor(user) * shootingSpeed;
 			if (hero.buff(Riot.RiotTracker.class) != null) {
-				speed *= 2;
+				speed *= 0.5f;
 			}
 			return speed;
 		}
