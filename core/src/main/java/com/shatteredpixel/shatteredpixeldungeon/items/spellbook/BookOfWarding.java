@@ -3,6 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.spellbook;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.GooWarn;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -49,18 +50,28 @@ public class BookOfWarding extends SpellBook {
 
     @Override
     public void readEffect() {
-        int spawned = spawnImages(Dungeon.hero.pos, Math.round((2+Dungeon.hero.lvl/2f)*(1+0.5f*Dungeon.hero.pointsInTalent(Talent.SPELL_ENHANCE))), 3);
-        if (spawned > 0) {
-            GLog.p(Messages.get(this, "appear"));
+        int sqawnedImages = 0;
+        for (Char ch : Actor.chars()) {
+            if (ch instanceof MirrorImage) sqawnedImages++;
+        }
+        if (sqawnedImages < 5) {
+            int spawned = spawnImages(Dungeon.hero.pos, Math.round((4+Dungeon.hero.lvl)*(1+0.5f*Dungeon.hero.pointsInTalent(Talent.SPELL_ENHANCE))), 3);
+            if (spawned > 0) {
+                GLog.p(Messages.get(this, "appear"));
+            }
+        } else {
+            GLog.w(Messages.get(this, "too_many_images"));
         }
     }
 
     @Override
     public String info() {
         String info = super.info();
-        if (Dungeon.hero.buff(SpellBookCoolDown.class) == null) {
-            info += "\n\n" + Messages.get(this, "time",
-                    Math.round((2+Dungeon.hero.lvl/2f)*(1+0.5f*Dungeon.hero.pointsInTalent(Talent.SPELL_ENHANCE))));
+        if (Dungeon.hero != null) {
+            if (Dungeon.hero.buff(SpellBookCoolDown.class) == null) {
+                info += "\n\n" + Messages.get(this, "time",
+                        Math.round((4+Dungeon.hero.lvl)*(1+0.5f*Dungeon.hero.pointsInTalent(Talent.SPELL_ENHANCE))));
+            }
         }
         return info;
     }

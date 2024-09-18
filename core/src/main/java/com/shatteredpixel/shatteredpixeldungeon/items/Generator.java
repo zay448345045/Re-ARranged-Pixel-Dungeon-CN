@@ -52,6 +52,19 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.Pill;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfAcceleration;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfAntibiotics;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfAwakening;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfFlame;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfFrost;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfHealing;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfInvisibility;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfLevitation;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfMindFocus;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfParalysis;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfToxin;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.PillOfVitamin;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfFrost;
@@ -68,6 +81,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.Brew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.ExoticPotion;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfArcana;
@@ -125,6 +139,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfShock;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.BrokenMagnifyingGlass;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.CrystalBall;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ChaoticCenser;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.DimensionalSundial;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ExoticCrystals;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.EyeOfNewt;
@@ -137,10 +152,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.PetrifiedSeed;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.PinkGem;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.RatSkull;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.SuspiciousKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.SaltCube;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ShardOfOblivion;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ThirteenLeafClover;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrapMechanism;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.Trinket;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.VialOfBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.WondrousResin;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
@@ -264,6 +282,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingSp
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Tomahawk;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Trident;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.alchemy.Cross;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Fadeleaf;
@@ -313,7 +333,8 @@ public class Generator {
 		MIS_T3  ( 0, 0, MissileWeapon.class ),
 		MIS_T4  ( 0, 0, MissileWeapon.class ),
 		MIS_T5  ( 0, 0, MissileWeapon.class ),
-		
+		MIS_SP  ( 0, 0, MissileWeapon.class ),
+
 		WAND	( 1, 1, Wand.class ),
 		SPELLBOOK	( 0, 0, SpellBook.class ),
 		RING	( 1, 0, Ring.class ),
@@ -323,7 +344,8 @@ public class Generator {
 		
 		POTION	( 8, 8, Potion.class ),
 		SEED	( 1, 1, Plant.Seed.class ),
-		
+		PILL	( 0, 0, Pill.class ),
+
 		SCROLL	( 8, 8, Scroll.class ),
 		STONE   ( 1, 1, Runestone.class),
 		
@@ -370,7 +392,7 @@ public class Generator {
 		static {
 			subOrderings.put(Trinket.class, new ArrayList<>(Arrays.asList(Trinket.class, TrinketCatalyst.class)));
 			subOrderings.put(MissileWeapon.class, new ArrayList<>(Arrays.asList(MissileWeapon.class, Bomb.class)));
-			subOrderings.put(Potion.class, new ArrayList<>(Arrays.asList(Potion.class, ExoticPotion.class, Brew.class, Elixir.class, LiquidMetal.class)));
+			subOrderings.put(Potion.class, new ArrayList<>(Arrays.asList(Waterskin.class, Potion.class, ExoticPotion.class, Brew.class, Elixir.class, LiquidMetal.class)));
 			subOrderings.put(Scroll.class, new ArrayList<>(Arrays.asList(Scroll.class, ExoticScroll.class, Spell.class, ArcaneResin.class)));
 		}
 
@@ -436,6 +458,22 @@ public class Generator {
 					Starflower.Seed.class};
 			SEED.defaultProbs = new float[]{ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 };
 			SEED.probs = SEED.defaultProbs.clone();
+
+			PILL.classes = new Class<?>[]{
+					PillOfAwakening.class,
+					PillOfHealing.class,
+					PillOfMindFocus.class,
+					PillOfFrost.class,
+					PillOfFlame.class,
+					PillOfToxin.class,
+					PillOfAcceleration.class,
+					PillOfInvisibility.class,
+					PillOfLevitation.class,
+					PillOfParalysis.class,
+					PillOfAntibiotics.class,
+					PillOfVitamin.class};
+			PILL.defaultProbs = new float[]{ 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 };
+			PILL.probs = PILL.defaultProbs.clone();
 			
 			SCROLL.classes = new Class<?>[]{
 					ScrollOfUpgrade.class, //3 drop every chapter, see Dungeon.souNeeded()
@@ -531,6 +569,7 @@ public class Generator {
 					Quarterstaff.class,
 					Dirk.class,
 					Sickle.class,
+					Pickaxe.class,
 					Nunchaku.class,
 					DualDagger.class,
 					Knife.class,
@@ -539,7 +578,7 @@ public class Generator {
 					HG_T2.class,
 					SMG_T2.class
 			};
-			WEP_T2.defaultProbs = new float[]{ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
+			WEP_T2.defaultProbs = new float[]{ 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 2 };
 			WEP_T2.probs = WEP_T2.defaultProbs.clone();
 			
 			WEP_T3.classes = new Class<?>[]{
@@ -681,9 +720,10 @@ public class Generator {
 			MIS_T1.classes = new Class<?>[]{
 					ThrowingStone.class,
 					ThrowingKnife.class,
-					ThrowingSpike.class
+					ThrowingSpike.class,
+					Dart.class
 			};
-			MIS_T1.defaultProbs = new float[]{ 3, 3, 3 };
+			MIS_T1.defaultProbs = new float[]{ 3, 3, 3, 0 };
 			MIS_T1.probs = MIS_T1.defaultProbs.clone();
 			
 			MIS_T2.classes = new Class<?>[]{
@@ -717,6 +757,12 @@ public class Generator {
 			};
 			MIS_T5.defaultProbs = new float[]{ 3, 3, 3 };
 			MIS_T5.probs = MIS_T5.defaultProbs.clone();
+
+			MIS_SP.classes = new Class<?>[]{
+					Cross.class
+			};
+			MIS_SP.defaultProbs = new float[]{ 0 };
+			MIS_SP.probs = MIS_SP.defaultProbs.clone();
 			
 			FOOD.classes = new Class<?>[]{
 					Food.class,
@@ -771,7 +817,10 @@ public class Generator {
 					MimicTooth.class,
 					WondrousResin.class,
 					EyeOfNewt.class,
-
+					SaltCube.class,
+					VialOfBlood.class,
+					ShardOfOblivion.class,
+					ChaoticCenser.class,
 					MagicalCompass.class,
 					CrystalBall.class,
 					BrokenMagnifyingGlass.class,
@@ -779,7 +828,7 @@ public class Generator {
 					PinkGem.class,
 					Necklace.class
 			};
-			TRINKET.defaultProbs = new float[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1 };
+			TRINKET.defaultProbs = new float[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  1, 1, 1, 1, 1, 1 };
 			TRINKET.probs = TRINKET.defaultProbs.clone();
 
 			for (Category cat : Category.values()){

@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.Pill;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.Brew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
@@ -88,7 +89,7 @@ public class ScrollOfTransmutation extends InventoryScroll {
 		//all rings, wands, artifacts, trinkets, seeds, and runestones
 		} else {
 			return item instanceof Ring || item instanceof Wand || item instanceof Artifact
-					|| item instanceof Trinket || item instanceof Plant.Seed
+					|| item instanceof Trinket || item instanceof Plant.Seed || item instanceof Pill
 					|| item instanceof Runestone;
 		}
 	}
@@ -163,17 +164,26 @@ public class ScrollOfTransmutation extends InventoryScroll {
 			return changeWand( (Wand)item );
 		} else if (item instanceof Plant.Seed) {
 			return changeSeed((Plant.Seed) item);
+		} else if (item instanceof Pill) {
+			return changePill((Pill) item);
 		} else if (item instanceof Runestone) {
 			return changeStone((Runestone) item);
 		} else if (item instanceof Artifact) {
 			Artifact a = changeArtifact( (Artifact)item );
 			if (a == null){
-				//if no artifacts are left, generate a random +0 ring with shared ID/curse state
+				//if no artifacts are left, generate a random ring with shared ID/curse state
+				//artifact and ring levels are not exactly equivalent, give the ring up to +2
 				Item result = Generator.randomUsingDefaults(Generator.Category.RING);
 				result.levelKnown = item.levelKnown;
 				result.cursed = item.cursed;
 				result.cursedKnown = item.cursedKnown;
-				result.level(0);
+				if (item.visiblyUpgraded() == 10){
+					result.level(2);
+				} else if (item.visiblyUpgraded() >= 5){
+					result.level(1);
+				} else {
+					result.level(0);
+				}
 				return result;
 			} else {
 				return a;
@@ -305,6 +315,7 @@ public class ScrollOfTransmutation extends InventoryScroll {
 
 		n.level(t.trueLevel());
 		n.levelKnown = t.levelKnown;
+		n.cursedKnown = t.cursedKnown;
 		n.cursed = t.cursed;
 
 		return n;
@@ -340,6 +351,16 @@ public class ScrollOfTransmutation extends InventoryScroll {
 			n = (Plant.Seed)Generator.randomUsingDefaults( Generator.Category.SEED );
 		} while (n.getClass() == s.getClass());
 		
+		return n;
+	}
+
+	private static Pill changePill( Pill p ) {
+		Pill n;
+
+		do {
+			n = (Pill) Generator.randomUsingDefaults( Generator.Category.PILL );
+		} while (n.getClass() == p.getClass());
+
 		return n;
 	}
 	
