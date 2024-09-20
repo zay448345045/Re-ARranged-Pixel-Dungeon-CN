@@ -7,15 +7,15 @@ buildscript {
         //the R8 version bundled with AGP 8.1.0+ causes crashes on very old Android versions
 
         //This affects ICS and Lollipop at least, maybe also KitKat
-        classpath 'com.android.tools.build:gradle:8.1.3'
+        classpath 'com.android.tools.build:gradle:8.0.2'
     }
 }
 
 allprojects {
 
     ext {
-        appName = 'Rearranged Pixel Dungeon'
-        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungon'
+        appName = 'Rearranged Pixel Dungeon CN'
+        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungoncn'
 
         appVersionCode = 797
         appVersionName = '2.5.2'
@@ -30,7 +30,7 @@ allprojects {
 
         gdxVersion = '1.12.1'
         gdxControllersVersion = '2.2.4-SNAPSHOT'
-        robovmVersion = '2.3.21'
+        robovmVersion = '2.3.20'
     }
     version = appVersionName
 

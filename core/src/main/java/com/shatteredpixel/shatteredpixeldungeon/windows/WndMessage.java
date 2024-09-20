@@ -27,6 +27,9 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 
 public class WndMessage extends Window {
 
+    private static final int WIDTH_P = 120;
+    private static final int WIDTH_L = 144;
+
 	private static final int WIDTH_MIN = 120;
 	private static final int WIDTH_MAX = 220;
 	private static final int MARGIN = 4;
