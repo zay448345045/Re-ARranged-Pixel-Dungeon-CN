@@ -353,7 +353,7 @@ public class WndJournal extends WndTabbed {
 					if (i == 4){
 						y += ITEM_HEIGHT;
 						x = 0;
-						buttonWidth = width()/4;
+						buttonWidth = width()/5;
 					}
 				}
 			}
@@ -364,7 +364,7 @@ public class WndJournal extends WndTabbed {
 			updateList();
 		}
 		
-		private void updateList() {
+		public void updateList() {
 
 			if (currentPageIdx != -1 && !Document.ALCHEMY_GUIDE.isPageFound(currentPageIdx)){
 				currentPageIdx = -1;

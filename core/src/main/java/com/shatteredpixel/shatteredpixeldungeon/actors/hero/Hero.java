@@ -41,6 +41,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HeroDisguise;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invulnerability;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AscensionChallenge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awakening;
@@ -199,6 +201,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.alchemy.Lance
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.alchemy.UnholyBible;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.gun.Gun;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.gun.SG.SG;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.DisposableMissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
@@ -208,6 +211,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.WeakFloorRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
@@ -513,7 +517,11 @@ public class Hero extends Char {
 
 	@Override
 	public String name(){
-		return className();
+		if (buff(HeroDisguise.class) != null) {
+			return buff(HeroDisguise.class).getDisguise().title();
+		} else {
+			return className();
+		}
 	}
 
 	@Override
@@ -2260,7 +2268,7 @@ public class Hero extends Char {
 			}
 
 			if (newEnemy != null) {
-				if (wep instanceof MissileWeapon) {
+				if (wep instanceof MissileWeapon && !(wep instanceof DisposableMissileWeapon)) {
 					if (((MissileWeapon)wep).durabilityLeft() > 0) {
 						Dungeon.level.drop(wep, enemy.pos).sprite.drop();
 					}
@@ -2548,6 +2556,12 @@ public class Hero extends Char {
 						}
 					}
 					if (found) break;
+				}
+
+				//Clear blobs that only exist for landmarks.
+				// Might want to make this a properly if it's used more
+				if (found && b instanceof WeakFloorRoom.WellID){
+					b.fullyClear();
 				}
 			}
 		}

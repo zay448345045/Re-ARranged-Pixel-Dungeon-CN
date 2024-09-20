@@ -230,7 +230,7 @@ public class Teleporter extends Item {
 
                             Class finalItemClass = null;
                             for (Class classes : itemClass) {
-                                if (itemName.equals(Messages.get(classes, "name"))) {
+                                if (itemName.equalsIgnoreCase(Messages.get(classes, "name"))) {
                                     finalItemClass = classes;
                                     break;
                                 }
@@ -381,6 +381,7 @@ public class Teleporter extends Item {
 //            if (hero.buff(HorseRiding.RidingCooldown.class) != null) {
 //                hero.buff(HorseRiding.RidingCooldown.class).kill();
 //            }
+            Dungeon.level.drop(Generator.randomWeapon( (Dungeon.depth / 5) + 1), hero.pos).sprite.drop();
         }
     }
 
