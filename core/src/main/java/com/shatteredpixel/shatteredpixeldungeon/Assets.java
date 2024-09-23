@@ -79,33 +79,53 @@ public class Assets {
 		public static final String BANNERS  = "interfaces/banners.png";
 		public static final String BADGES   = "interfaces/badges.png";
 		public static final String LOCKED   = "interfaces/locked_badge.png";
-
-		public static final String CHROME   = "interfaces/chrome.png";
 		public static final String ICONS    = "interfaces/icons.png";
-		public static final String STATUS   = "interfaces/status_pane.png";
-		public static final String MENU     = "interfaces/menu_pane.png";
-		public static final String MENU_BTN = "interfaces/menu_button.png";
-		public static final String TOOLBAR  = "interfaces/toolbar.png";
 		public static final String SHADOW   = "interfaces/shadow.png";
-		public static final String BOSSHP   = "interfaces/boss_hp.png";
 
 		public static final String SURFACE  = "interfaces/surface.png";
-
-		public static final String LOADING_SEWERS   = "interfaces/loading_sewers.png";
-		public static final String LOADING_PRISON   = "interfaces/loading_prison.png";
-		public static final String LOADING_CAVES    = "interfaces/loading_caves.png";
-		public static final String LOADING_CITY     = "interfaces/loading_city.png";
-		public static final String LOADING_HALLS    = "interfaces/loading_halls.png";
 
 		public static final String BUFFS_SMALL      = "interfaces/buffs.png";
 		public static final String BUFFS_LARGE      = "interfaces/large_buffs.png";
 
 		public static final String TALENT_ICONS     = "interfaces/talent_icons.png";
-		public static final String TALENT_BUTTON    = "interfaces/talent_button.png";
 
 		public static final String HERO_ICONS       = "interfaces/hero_icons.png";
 
 		public static final String RADIAL_MENU      = "interfaces/radial_menu.png";
+
+		//alternative UIs
+		public static String CHROME   = "interfaces/chrome.png"; //alternative
+		public static String TOOLBAR  = "interfaces/toolbar.png"; //alternative
+		public static String STATUS   = "interfaces/status_pane.png"; //alternative
+		public static String MENU     = "interfaces/menu_pane.png"; //alternative
+		public static String MENU_BTN = "interfaces/menu_button.png"; //alternative
+		public static String BOSSHP   = "interfaces/boss_hp.png"; //alternative
+		public static String TALENT_BUTTON    = "interfaces/talent_button.png"; //alternative
+		static {
+			switch (SPDSettings.uiType()) {
+				case 0: default:
+					break;
+				case 1: //shattered pd ui
+					CHROME = "interfaces/alternative/shattered/chrome.png";
+					TOOLBAR = "interfaces/alternative/shattered/toolbar.png";
+					STATUS = "interfaces/alternative/shattered/status_pane.png";
+					MENU = "interfaces/alternative/shattered/menu_pane.png";
+					MENU_BTN = "interfaces/alternative/shattered/menu_button.png";
+					BOSSHP = "interfaces/alternative/shattered/boss_hp.png";
+					TALENT_BUTTON = "interfaces/alternative/shattered/talent_button.png";
+					break;
+				case 2: //blue archive pd ui
+					CHROME = "interfaces/alternative/bluearchive/chrome.png";
+					TOOLBAR = "interfaces/alternative/bluearchive/toolbar.png";
+					STATUS = "interfaces/alternative/bluearchive/status_pane.png";
+					MENU = "interfaces/alternative/bluearchive/menu_pane.png";
+					MENU_BTN = "interfaces/alternative/bluearchive/menu_button.png";
+					BOSSHP = "interfaces/alternative/bluearchive/boss_hp.png";
+					TALENT_BUTTON = "interfaces/alternative/bluearchive/talent_button.png";
+					break;
+
+			}
+		}
 	}
 
 	//these points to resource bundles, not raw asset files
@@ -158,6 +178,10 @@ public class Assets {
 		public static final String HALLS_TENSE          = "music/halls_tense.ogg";
 		public static final String HALLS_BOSS           = "music/halls_boss.ogg";
 		public static final String HALLS_BOSS_FINALE    = "music/halls_boss_finale.ogg";
+
+		public static final String OLD_MAIN				= "music/old_main.ogg";
+		public static final String OLD_THEME			= "music/old_theme.ogg";
+		public static final String OLD_SURFACE			= "music/old_surface.ogg";
 	}
 
 	public static class Sounds {
@@ -258,6 +282,12 @@ public class Assets {
 		public static final String ADVENTURER	= "splashes/adventurer.jpg";
 		public static final String KNIGHT	= "splashes/knight.jpg";
 		public static final String NURSE	= "splashes/nurse.jpg";
+
+		public static final String SEWERS   = "splashes/sewers.jpg";
+		public static final String PRISON   = "splashes/prison.jpg";
+		public static final String CAVES    = "splashes/caves.jpg";
+		public static final String CITY     = "splashes/city.jpg";
+		public static final String HALLS    = "splashes/halls.jpg";
 	}
 
 	public static class Sprites {

@@ -42,7 +42,7 @@ public class ItemSpriteSheet {
 		film.add( item, x, y, x+width, y+height);
 	}
 
-	private static final int PLACEHOLDERS   =                               xy(1, 1);   //16 slots
+	private static final int PLACEHOLDERS   =                               xy(1, 1);   //18 slots
 	//SOMETHING is the default item sprite at position 0. May show up ingame if there are bugs.
 	public static final int SOMETHING       = PLACEHOLDERS+0;
 	public static final int WEAPON_HOLDER   = PLACEHOLDERS+1;
@@ -60,6 +60,8 @@ public class ItemSpriteSheet {
 	public static final int STONE_HOLDER    = PLACEHOLDERS+13;
 	public static final int ELIXIR_HOLDER   = PLACEHOLDERS+14;
 	public static final int SPELL_HOLDER    = PLACEHOLDERS+15;
+	public static final int MOB_HOLDER      = PLACEHOLDERS+16;
+	public static final int DOCUMENT_HOLDER = PLACEHOLDERS+17;
 	static{
 		assignItemRect(SOMETHING,       8,  13);
 		assignItemRect(WEAPON_HOLDER,   14, 14);
@@ -77,9 +79,11 @@ public class ItemSpriteSheet {
 		assignItemRect(STONE_HOLDER,    14, 12);
 		assignItemRect(ELIXIR_HOLDER,   12, 14);
 		assignItemRect(SPELL_HOLDER,    8,  16);
+		assignItemRect(MOB_HOLDER,      15, 14);
+		assignItemRect(DOCUMENT_HOLDER, 10, 11);
 	}
 
-	private static final int UNCOLLECTIBLE  =                               xy(1, 2);   //16 slots
+	private static final int UNCOLLECTIBLE  =                               xy(3, 2);   //14 slots
 	public static final int GOLD            = UNCOLLECTIBLE+0;
 	public static final int ENERGY          = UNCOLLECTIBLE+1;
 
@@ -483,6 +487,10 @@ public class ItemSpriteSheet {
 	public static final int MIMIC_TOOTH     = TRINKETS+8;
 	public static final int WONDROUS_RESIN  = TRINKETS+9;
 	public static final int EYE_OF_NEWT     = TRINKETS+10;
+	public static final int SALT_CUBE       = TRINKETS+11;
+	public static final int BLOOD_VIAL      = TRINKETS+12;
+	public static final int OBLIVION_SHARD  = TRINKETS+13;
+	public static final int CHAOTIC_CENSER  = TRINKETS+14;
 	static{
 		assignItemRect(RAT_SKULL,       16, 11);
 		assignItemRect(PARCHMENT_SCRAP, 10, 14);
@@ -495,6 +503,10 @@ public class ItemSpriteSheet {
 		assignItemRect(MIMIC_TOOTH,     8,  15);
 		assignItemRect(WONDROUS_RESIN,  12, 11);
 		assignItemRect(EYE_OF_NEWT,     12, 12);
+		assignItemRect(SALT_CUBE,       12, 13);
+		assignItemRect(BLOOD_VIAL,      6,  15);
+		assignItemRect(OBLIVION_SHARD,  7,  14);
+		assignItemRect(CHAOTIC_CENSER,  13, 15);
 	}
 
 	private static final int SCROLLS        =                               xy(1, 19);  //16 slots
@@ -839,6 +851,7 @@ public class ItemSpriteSheet {
 	public static final int BLUEPRINT		= NEW_SCROLL+1;
 	static{
 		assignItemRect(SCROLL_PLUS, 15, 14);
+		assignItemRect(BLUEPRINT, 15, 14);
 	}
 
 	private static final int NEW_EXOTIC_SCROLL 	=		xy(1, 38);  //16 slots
@@ -860,10 +873,12 @@ public class ItemSpriteSheet {
 			assignItemRect(i, 8, 10);
 	}
 
-	private static final int NEW_PLACEHOLDERS =			xy(1, 40);  //16 slots
-	public static final int SPELLBOOK_HOLDER   = NEW_PLACEHOLDERS +0;
+	private static final int NEW_PLACEHOLDERS 	=			xy(1, 40);  //16 slots
+	public static final int SPELLBOOK_HOLDER    = NEW_PLACEHOLDERS +0;
+	public static final int PILLS_HOLDER   	    = NEW_PLACEHOLDERS +1;
 	static{
 		assignItemRect(SPELLBOOK_HOLDER	, 10, 14);
+		assignItemRect(PILLS_HOLDER	, 11, 11);
 	}
 
 
@@ -874,6 +889,7 @@ public class ItemSpriteSheet {
 	public static final int CARTRIDGE	= BULLET_ITEM+3;
 	public static final int BULLET_BELT	= BULLET_ITEM+4;
 	public static final int OLD_AMULET	= BULLET_ITEM+5;
+	public static final int GUNSMITHING_TOOL= BULLET_ITEM+6;
 	static{
 
 		assignItemRect(BULLET		, 13, 13);
@@ -882,6 +898,7 @@ public class ItemSpriteSheet {
 		assignItemRect(CARTRIDGE	, 11, 11);
 		assignItemRect(BULLET_BELT	, 15, 15);
 		assignItemRect(OLD_AMULET	, 16, 16);
+		assignItemRect(GUNSMITHING_TOOL	, 16, 13);
 	}
 
 	private static final int BULLETS		=			xy(1, 42);  //16 slots
@@ -1434,6 +1451,25 @@ public class ItemSpriteSheet {
 		for (int i = NECKLACE_GEMS; i < NECKLACE_GEMS+16; i++)
 			assignItemRect(i, 14, 15);
 	}
+
+	private static final int PILL					=			xy(1, 70);
+	public static final int PILL_STRENGTH =  PILL+0;
+	public static final int PILL_HEALING  =  PILL+1;
+	public static final int PILL_MINDVIS  =  PILL+2;
+	public static final int PILL_FROST    =  PILL+3;
+	public static final int PILL_LIQFLAME =  PILL+4;
+	public static final int PILL_TOXICGAS =  PILL+5;
+	public static final int PILL_HASTE    =  PILL+6;
+	public static final int PILL_INVIS    =  PILL+7;
+	public static final int PILL_LEVITATE =  PILL+8;
+	public static final int PILL_PARAGAS  =  PILL+9;
+	public static final int PILL_PURITY   =  PILL+10;
+	public static final int PILL_EXP      =  PILL+11;
+	static {
+		for (int i = PILL; i < PILL+12; i++)
+			assignItemRect(i, 11, 11);
+	}
+
 	// ****** new sprites end ******
 
 

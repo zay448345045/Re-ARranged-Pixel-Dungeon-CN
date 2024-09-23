@@ -30,7 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GreaterHaste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MonkEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
@@ -271,12 +271,6 @@ public class MeleeWeapon extends Weapon {
 			hero.sprite.showStatusWithIcon(CharSprite.POSITIVE, Integer.toString(shieldAmt), FloatingText.SHIELDING);
 		}
 
-		if (hero.buff(Talent.CombinedLethalityAbilityTracker.class) != null
-				&& hero.buff(Talent.CombinedLethalityAbilityTracker.class).weapon != null
-				&& hero.buff(Talent.CombinedLethalityAbilityTracker.class).weapon != this){
-			Buff.affect(hero, Talent.CombinedLethalityTriggerTracker.class, 5f);
-		}
-
 		if (hero.hasTalent(Talent.SKILLED_HAND)) {
 			Buff.affect(hero, Talent.SkilledHandTracker.class);
 		}
@@ -311,8 +305,8 @@ public class MeleeWeapon extends Weapon {
 		}
 		if (hero.hasTalent(Talent.COMBINED_ENERGY)){
 			Talent.CombinedEnergyAbilityTracker tracker = hero.buff(Talent.CombinedEnergyAbilityTracker.class);
-			if (tracker == null || tracker.energySpent == -1){
-				Buff.prolong(hero, Talent.CombinedEnergyAbilityTracker.class, hero.cooldown()).wepAbilUsed = true;
+			if (tracker == null || !tracker.monkAbilused){
+				Buff.prolong(hero, Talent.CombinedEnergyAbilityTracker.class, 5f).wepAbilUsed = true;
 			} else {
 				tracker.wepAbilUsed = true;
 				Buff.affect(hero, MonkEnergy.class).processCombinedEnergy(tracker);
@@ -335,8 +329,8 @@ public class MeleeWeapon extends Weapon {
 
 	public static void onAbilityKill( Hero hero, Char killed ){
 		if (killed.alignment == Char.Alignment.ENEMY && hero.hasTalent(Talent.LETHAL_HASTE)){
-			//effectively 2/3 turns of haste
-			Buff.prolong(hero, Haste.class, 1.67f+hero.pointsInTalent(Talent.LETHAL_HASTE));
+			//effectively 3/5 turns of greater haste
+			Buff.affect(hero, GreaterHaste.class).set(2 + 2*hero.pointsInTalent(Talent.LETHAL_HASTE));
 		}
 	}
 
@@ -363,13 +357,17 @@ public class MeleeWeapon extends Weapon {
 	}
 
 	public int STRReq(int lvl){
-		return STRReq(tier, lvl);
+		int req = STRReq(tier, lvl);
+		if (masteryPotionBonus){
+			req -= 2;
+		}
+		return req;
 	}
 
 	private static boolean evaluatingTwinUpgrades = false;
 	@Override
 	public int buffedLvl() {
-		if (!evaluatingTwinUpgrades && isEquipped(Dungeon.hero) && Dungeon.hero.hasTalent(Talent.TWIN_UPGRADES)){
+		if (!evaluatingTwinUpgrades && Dungeon.hero != null && isEquipped(Dungeon.hero) && Dungeon.hero.hasTalent(Talent.TWIN_UPGRADES)){
 			KindOfWeapon other = null;
 			if (Dungeon.hero.belongings.weapon() != this) other = Dungeon.hero.belongings.weapon();
 			if (Dungeon.hero.belongings.secondWep() != this) other = Dungeon.hero.belongings.secondWep();
@@ -391,38 +389,13 @@ public class MeleeWeapon extends Weapon {
 	}
 
 	@Override
-	public float accuracyFactor(Char owner, Char target) {
-		float ACC = super.accuracyFactor(owner, target);
-
-		if (owner instanceof Hero
-				&& ((Hero) owner).hasTalent(Talent.PRECISE_ASSAULT)
-				//does not trigger on ability attacks
-				&& ((Hero) owner).belongings.abilityWeapon != this) {
-			if (((Hero) owner).heroClass != HeroClass.DUELIST) {
-				//persistent +10%/20%/30% ACC for other heroes
-				ACC *= 1f + 0.1f * ((Hero) owner).pointsInTalent(Talent.PRECISE_ASSAULT);
-			} else if (this instanceof Flail && owner.buff(Flail.SpinAbilityTracker.class) != null){
-				//do nothing, this is not a regular attack so don't consume preciase assault
-			} else if (this instanceof ChainFlail && owner.buff(ChainFlail.SpinAbilityTracker.class) != null){
-				//do nothing, this is not a regular attack so don't consume preciase assault
-			} else if (owner.buff(Talent.PreciseAssaultTracker.class) != null) {
-				// 2x/4x/8x ACC for duelist if she just used a weapon ability
-				ACC *= Math.pow(2, ((Hero) owner).pointsInTalent(Talent.PRECISE_ASSAULT));
-				owner.buff(Talent.PreciseAssaultTracker.class).detach();
-			}
-		}
-
-		return ACC;
-	}
-
-	@Override
 	public int damageRoll(Char owner) {
 		int damage = augment.damageFactor(super.damageRoll( owner ));
 
 		if (owner instanceof Hero) {
 			int exStr = ((Hero)owner).STR() - STRReq();
 			if (exStr > 0) {
-				damage += Char.combatRoll( 0, exStr );
+				damage += Hero.heroDamageIntRange( 0, exStr );
 			}
 		}
 		return damage;
@@ -431,18 +404,20 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public String info() {
 
-		String info = desc();
+		String info = super.info();
 
 		if (levelKnown) {
 			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", tier, augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
-			if (STRReq() > Dungeon.hero.STR()) {
-				info += " " + Messages.get(Weapon.class, "too_heavy");
-			} else if (Dungeon.hero.STR() > STRReq()){
-				info += " " + Messages.get(Weapon.class, "excess_str", Dungeon.hero.STR() - STRReq());
+			if (Dungeon.hero != null) {
+				if (STRReq() > Dungeon.hero.STR()) {
+					info += " " + Messages.get(Weapon.class, "too_heavy");
+				} else if (Dungeon.hero.STR() > STRReq()) {
+					info += " " + Messages.get(Weapon.class, "excess_str", Dungeon.hero.STR() - STRReq());
+				}
 			}
 		} else {
 			info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_unknown", tier, min(0), max(0), STRReq(0));
-			if (STRReq(0) > Dungeon.hero.STR()) {
+			if (Dungeon.hero != null && STRReq(0) > Dungeon.hero.STR()) {
 				info += " " + Messages.get(MeleeWeapon.class, "probably_too_heavy");
 			}
 		}
@@ -481,11 +456,11 @@ public class MeleeWeapon extends Weapon {
 		}
 
 		//the mage's staff has no ability as it can only be gained by the mage
-		if (Dungeon.hero.heroClass == HeroClass.DUELIST && !(this instanceof MagesStaff)){
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST && !(this instanceof MagesStaff)){
 			info += "\n\n" + abilityInfo();
 		}
 
-		if (isEquipped(hero) && hero.critChance(null, this) > 0) {
+		if (hero != null && isEquipped(hero) && hero.critChance(null, this) > 0) {
 			info += "\n\n" + Messages.get(Weapon.class, "critchance", Messages.decimalFormat("#.##", 100*hero.critChance(null, this)));
 		}
 		
@@ -508,9 +483,13 @@ public class MeleeWeapon extends Weapon {
 		return Messages.get(this, "ability_desc");
 	}
 
+	public String upgradeAbilityStat(int level){
+		return null;
+	}
+
 	@Override
 	public String status() {
-		if (isEquipped(Dungeon.hero)
+		if (Dungeon.hero != null && isEquipped(Dungeon.hero)
 				&& Dungeon.hero.buff(Charger.class) != null) {
 			Charger buff = Dungeon.hero.buff(Charger.class);
 			return buff.charges + "/" + buff.chargeCap();
@@ -576,9 +555,12 @@ public class MeleeWeapon extends Weapon {
 						chargeToGain *= 1+hero.pointsInTalent(Talent.FASTER_CHARGE)/12f;
 					}
 
-					if (hero.hasTalent(Talent.TWIN_SWORD) && hero.belongings.weapon.getClass() == hero.belongings.secondWep.getClass()) {
-						chargeToGain *= 1.25f;
+					if (hero.hasTalent(Talent.TWIN_SWORD) && hero.belongings.weapon != null && hero.belongings.secondWep != null) {
+						if (hero.belongings.weapon.getClass() == hero.belongings.secondWep.getClass()) {
+							chargeToGain *= 1.25f;
+						}
 					}
+
 
 					//50% slower charge gain with brawler's stance enabled, even if buff is inactive
 					if (Dungeon.hero.buff(RingOfForce.BrawlersStance.class) != null){
@@ -626,11 +608,14 @@ public class MeleeWeapon extends Weapon {
 
 		public int chargeCap(){
 			//caps at level 19 with 8 or 10 charges
+			int charge;
 			if (Dungeon.hero.subClass == HeroSubClass.CHAMPION){
-				return Math.min(10, 4 + (Dungeon.hero.lvl - 1) / 3);
+				charge = Math.min(10, 4 + (Dungeon.hero.lvl - 1) / 3);
 			} else {
-				return Math.min(8, 2 + (Dungeon.hero.lvl - 1) / 3);
+				charge = Math.min(8, 2 + (Dungeon.hero.lvl - 1) / 3);
 			}
+			charge += Dungeon.hero.pointsInTalent(Talent.ACCUMULATION);
+			return charge;
 		}
 
 		public void gainCharge( float charge ){

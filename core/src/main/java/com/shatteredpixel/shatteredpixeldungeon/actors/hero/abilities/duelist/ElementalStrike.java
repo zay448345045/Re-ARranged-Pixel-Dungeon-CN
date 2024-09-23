@@ -124,6 +124,10 @@ public class ElementalStrike extends ArmorAbility {
 		effectTypes.put(Corrupting.class,   MagicMissile.SHADOW_CONE);
 		effectTypes.put(Grim.class,         MagicMissile.SHADOW_CONE);
 		effectTypes.put(Vampiric.class,     MagicMissile.BLOOD_CONE);
+		effectTypes.put(Venomous.class,     MagicMissile.PURPLE_CONE);
+		effectTypes.put(Eldritch.class,     MagicMissile.SHADOW_CONE);
+		effectTypes.put(Stunning.class,     MagicMissile.SPARK_CONE);
+		effectTypes.put(Vorpal.class,     	MagicMissile.BLOOD_CONE);
 
 		effectTypes.put(Annoying.class,     MagicMissile.SHADOW_CONE);
 		effectTypes.put(Displacing.class,   MagicMissile.SHADOW_CONE);
@@ -377,7 +381,7 @@ public class ElementalStrike extends ArmorAbility {
 		//*** no enchantment ***
 		if (ench == null) {
 			for (Char ch : affected){
-				ch.damage(Math.round(powerMulti* Char.combatRoll(6, 12)), ElementalStrike.this);
+				ch.damage(Math.round(powerMulti* Hero.heroDamageIntRange(6, 12)), ElementalStrike.this);
 			}
 
 		//*** Kinetic ***
@@ -545,7 +549,7 @@ public class ElementalStrike extends ArmorAbility {
 		} else if (ench instanceof Polarized){
 			for (Char ch : affected){
 				if (Random.Float() < 0.5f*powerMulti){
-					ch.damage(Char.combatRoll(24, 36), ElementalStrike.this);
+					ch.damage(Hero.heroDamageIntRange(24, 36), ElementalStrike.this);
 				}
 			}
 
@@ -577,14 +581,14 @@ public class ElementalStrike extends ArmorAbility {
 		} else if (ench instanceof Venomous){
 			for (Char ch : affected){
 				float hpRemaining = (ch.HP / (float)ch.HT);
-				Buff.affect(ch, Poison.class).set(0.3f * hpRemaining);
+				Buff.affect(ch, Poison.class).set(0.3f * hpRemaining * powerMulti);
 			}
 
 			//*** Vorpal ***
 		} else if (ench instanceof Vorpal) {
 			for (Char ch : affected) {
 				float hpRemaining = (ch.HP / (float) ch.HT);
-				Buff.affect(ch, Bleeding.class).set(0.2f * hpRemaining);
+				Buff.affect(ch, Bleeding.class).set(0.2f * hpRemaining * powerMulti);
 			}
 		}
 

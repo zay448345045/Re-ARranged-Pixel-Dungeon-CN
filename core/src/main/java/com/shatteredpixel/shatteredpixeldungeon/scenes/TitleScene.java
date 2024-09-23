@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
@@ -45,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSettings;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndVictoryCongrats;
 import com.watabou.glwrap.Blending;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -151,13 +153,13 @@ public class TitleScene extends PixelScene {
 		add(btnRankings);
 		Dungeon.daily = Dungeon.dailyReplay = false;
 
-		StyledButton btnBadges = new StyledButton(GREY_TR, Messages.get(this, "badges")){
+		StyledButton btnBadges = new StyledButton(GREY_TR, Messages.get(this, "journal")){
 			@Override
 			protected void onClick() {
-				ShatteredPixelDungeon.switchNoFade( BadgesScene.class );
+				ShatteredPixelDungeon.switchNoFade( JournalScene.class );
 			}
 		};
-		btnBadges.icon(Icons.get(Icons.BADGES));
+		btnBadges.icon(Icons.get(Icons.JOURNAL));
 		add(btnBadges);
 
 //		StyledButton btnNews = new NewsButton(GREY_TR, Messages.get(this, "news"));
@@ -189,13 +191,11 @@ public class TitleScene extends PixelScene {
 			btnPlay.setRect(title.x-50, topRegion+GAP, ((title.width()+100)/2)-1, BTN_HEIGHT);
 			align(btnPlay);
 			btnSupport.setRect(btnPlay.right()+2, btnPlay.top(), btnPlay.width(), BTN_HEIGHT);
-
 			btnRankings.setRect(btnPlay.left(), btnPlay.bottom()+ GAP, btnPlay.width(), BTN_HEIGHT);
-			btnSettings.setRect(btnRankings.right()+2, btnRankings.top(), btnRankings.width(), BTN_HEIGHT);
-
-			btnBadges.setRect(btnRankings.left(), btnRankings.bottom()+GAP, (btnPlay.width()*.67f)-1, BTN_HEIGHT);
-			btnChanges.setRect(btnBadges.right()+2, btnBadges.top(), btnBadges.width(), BTN_HEIGHT);
-			btnAbout.setRect(btnChanges.right()+2, btnBadges.top(), btnBadges.width(), BTN_HEIGHT);
+			btnBadges.setRect(btnRankings.right()+2, btnRankings.top(), btnRankings.width(), BTN_HEIGHT);
+			btnSettings.setRect(btnRankings.left(), btnRankings.bottom() + GAP, (int)(btnRankings.width()*0.67f)-1, BTN_HEIGHT);
+			btnChanges.setRect(btnSettings.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
+			btnAbout.setRect(btnChanges.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
 		} else {
 			btnPlay.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
 			align(btnPlay);
@@ -225,9 +225,15 @@ public class TitleScene extends PixelScene {
 			add( btnExit );
 		}
 
+		Badges.loadGlobal();
+		if (Badges.isUnlocked(Badges.Badge.VICTORY) && !SPDSettings.victoryNagged()) {
+			SPDSettings.victoryNagged(true);
+			add(new WndVictoryCongrats());
+		}
+
 		fadeIn();
 	}
-	
+
 	private void placeTorch( float x, float y ) {
 		Fireball fb = new Fireball();
 		fb.setPos( x, y );
@@ -354,7 +360,7 @@ public class TitleScene extends PixelScene {
 		@Override
 		protected void onClick() {
 			if (Messages.lang().status() == Languages.Status.X_UNFINISH){
-				WndSettings.last_index = 4;
+				WndSettings.last_index = 5;
 			}
 			ShatteredPixelDungeon.scene().add(new WndSettings());
 		}
@@ -407,6 +413,8 @@ public class TitleScene extends PixelScene {
                         "在游玩中可能会发现实际效果与文本描述有所出入(实际上作者已经这么干过不知道多少回了)，但译者仅进行翻译工作，程序性bug不在职责范围之内。左下角子页面列出当前版本（3.3.0）的已知bug，作为免责声明。\n"+
                         "——by _Teller_\n";
 
+                RenderedTextBlock.cnLocalizationFlag = true;
+
                 RenderedTextBlock info = PixelScene.renderTextBlock( text, 6 );
                 info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
                 info.setPos(MARGIN, MARGIN);
@@ -423,6 +431,8 @@ public class TitleScene extends PixelScene {
                 resize(
                         (int) (info.width() + MARGIN * 2),
                         (int) (info.height() + BTN_HEIGHT + MARGIN * 3));
+
+                RenderedTextBlock.cnLocalizationFlag = false;
             }
 
 
@@ -433,14 +443,13 @@ public class TitleScene extends PixelScene {
 
                 @Override
                 protected void onClick() {
+                    RenderedTextBlock.cnLocalizationFlag = true;
                     ShatteredPixelDungeon.scene().add(new WndMessage(
                             "- _陈旧护符只能对女猎弓，探险家铲子或砍刀，决斗任意非枪械近战或骑士盾使用，其他的作者还没做_\n"+
 
                             "以下内容经过代码分析与实际游玩确认存在，与翻译无关，以当前版本(3.11.1)为准，不排除随着后续更新而修复的可能。\n\n" +
                                     "- 格斗家的无阻腕动可以影响包括投掷武器的一切物理攻击\n" +
                                     "- 所有投掷武器的精准度严重异常，非枪支子弹近距离变成25%精度而远距离是225%精度\n" +
-                                    "- 决斗家的2-6天赋没有效果，从3.6.0融合evan2.4.0决斗家重做以来就一直没有。\n" +
-                                    "- 武士的副肾狂飙给的是3/5回合，与ar地牢里的文本和实际一致\n" +
                                     "- _武士的枪支射击一旦触发暴击，其伤害加成基准并非子弹，而是同阶的投掷武器模板_。导致暴击时机枪与冲锋枪伤害不正常的高，而榴弹火箭筒以及狙在没有任何加成的情况下输出反而可能会比不暴击的低，而霰弹枪的加成最大，多发弹丸与低单发伤害导致其暴击时的伤害期望至少+100%。突击步枪基本不受影响。\n" +
                                     "- _警告！此bug严重影响平衡性_大师只要在纳刀状态下且快斩不在冷却，任何试图调起暴击率计算式的方法(比如攻击和反复开关武器信息面板)都会导致时间倒退，造成包括但不限于身上buff与debuff异常延长(包括霰弹枪快斩暴击后纳刀在接近10回合内不会自动解除)，敌人长时间无法行动等各种严重问题。\n" +
                                     "- 工程师的迫击炮+2无效，而加农炮的+2同时影响了加农炮和迫击炮(cocoa写的天赋多，天赋效果贴岔的也多)\n"+
@@ -448,11 +457,10 @@ public class TitleScene extends PixelScene {
                                     "- 探索者的藤条束缚仍然会消耗，而且由于程序次序问题，在不足5根藤条的情况下对邻近敌人使用会无限反复触发2-5\n" +
                                     "- 复春之书的显示和效果不一致，植物生成数量很难达到期望值\n" +
                                     "- 砍刀在对超出距离的非敌方单位使用时没有效果，但饥饿值会-1，而砍草并不会减少饥饿值。\n" +
-                                    "- 骑士盾牌的迷彩刻印效果被狱火刻印触发。\n" +
-                                    "- 死亡骑士在巫妖之躯结束时没有复活手段但有无敌buff(如护甲技)则闪退。\n" +
                                     "- 幽灵骑士3-5天赋效果如括号内，减伤效果莫名其妙写到3-4里面了但3-4原效果也有效。\n" +
                                     "- 还有一个不能算bug的bug：解锁武士需要的武士刀并不包括evan破碎原版的武士刀。(what can I say)\n" , 4
                     ));
+                    RenderedTextBlock.cnLocalizationFlag = false;
                 }
             }
 
@@ -463,6 +471,7 @@ public class TitleScene extends PixelScene {
 
                 @Override
                 protected void onClick() {
+                    RenderedTextBlock.cnLocalizationFlag = true;
                     ShatteredPixelDungeon.scene().add(new WndMessage(
                                     "_警告！_以下内容可能破坏作者提供的解谜体验\n\n" +
                                     "cocoa用武器蓝图替代了大量炼金武器配方，不过只有正确的近战武器组合才能出正确的蓝图，而且还要献祭一把手头的武器，还有概率失败。\n" +
@@ -478,8 +487,8 @@ public class TitleScene extends PixelScene {
                                     "- 工匠之锤 = 战锤 + 升级催化剂 + 进化菱晶\n" +
                                     "- 村正 = 太刀 + 升级催化剂 + 进化菱晶\n" +
                                     "- 巨型双剑 = 巨剑 + 巨剑 + 进化菱晶\n" +
-                                    "- 阔剑 = 巨剑 + 升级催化剂 + 进化菱晶\n" +
-                                    "- 沉重的剑(力量24后变成圣剑)= 圣经 + 阔剑 + 进化菱晶\n" +
+                                    "- 重剑 = 巨剑 + 升级催化剂 + 进化菱晶\n" +
+                                    "- 沉重的剑(力量24后变成圣剑)= 圣经 + 重剑 + 进化菱晶\n" +
                                     "- 黑曜石盾 = 巨型方盾 + 升级催化剂 + 进化菱晶\n" +
                                     "- 骑枪 = 关刀 + 升级催化剂 + 进化菱晶\n" +
                                     "- 骑枪与黑盾 = 骑枪 + 黑曜石护盾 + 进化菱晶\n" +
@@ -490,6 +499,7 @@ public class TitleScene extends PixelScene {
                                     "- 战术突击步枪 = 强化突击步枪 + 升级催化剂 + 进化菱晶\n"+
                                     "- 防弹盾 = 战术手枪 + 黑曜石盾 + 进化菱晶\n"
                     ));
+                    RenderedTextBlock.cnLocalizationFlag = false;
                 }
             }
         }

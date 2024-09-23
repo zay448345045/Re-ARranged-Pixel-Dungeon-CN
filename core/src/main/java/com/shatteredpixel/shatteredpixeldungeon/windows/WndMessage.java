@@ -27,18 +27,30 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 
 public class WndMessage extends Window {
 
-	private static final int WIDTH_P = 120;
-	private static final int WIDTH_L = 144;
+    private static final int WIDTH_P = 120;
+    private static final int WIDTH_L = 144;
+
+	private static final int WIDTH_MIN = 120;
+	private static final int WIDTH_MAX = 220;
 	private static final int MARGIN = 4;
 	
 	public WndMessage( String text ) {
 		
 		super();
+
+		int width = WIDTH_MIN;
 		
 		RenderedTextBlock info = PixelScene.renderTextBlock( text, 6 );
-		info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
+		info.maxWidth(width - MARGIN * 2);
 		info.setPos(MARGIN, MARGIN);
 		add( info );
+
+		while (PixelScene.landscape()
+				&& info.height() > 120
+				&& width < WIDTH_MAX){
+			width += 20;
+			info.maxWidth(width - MARGIN * 2);
+		}
 
 		resize(
 			(int)info.width() + MARGIN * 2,
@@ -49,6 +61,8 @@ public class WndMessage extends Window {
 
         super();
 
+        RenderedTextBlock.cnLocalizationFlag = true;
+
         RenderedTextBlock info = PixelScene.renderTextBlock( text, size );
         info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
         info.setPos(MARGIN, MARGIN);
@@ -57,5 +71,7 @@ public class WndMessage extends Window {
         resize(
                 (int)info.width() + MARGIN * 2,
                 (int)info.height() + MARGIN * 2 );
+
+        RenderedTextBlock.cnLocalizationFlag = false;
     }
 }

@@ -87,6 +87,7 @@ public class Teleporter extends Item {
         Collections.addAll(itemClass, Generator.Category.SEED.classes);
         Collections.addAll(itemClass, Generator.Category.STONE.classes);
         Collections.addAll(itemClass, Generator.Category.FOOD.classes);
+        Collections.addAll(itemClass, Generator.Category.PILL.classes);
         for (Class classes : Generator.Category.POTION.classes){
             itemClass.add(classes);
             itemClass.add(ExoticPotion.regToExo.get(classes));
@@ -229,7 +230,7 @@ public class Teleporter extends Item {
 
                             Class finalItemClass = null;
                             for (Class classes : itemClass) {
-                                if (itemName.equals(Messages.get(classes, "name"))) {
+                                if (itemName.equalsIgnoreCase(Messages.get(classes, "name"))) {
                                     finalItemClass = classes;
                                     break;
                                 }
@@ -279,6 +280,10 @@ public class Teleporter extends Item {
 
                             //아이템 감정 여부 결정 메커니즘
                             String identify = strInput[3].replaceAll(Messages.get(Teleporter.class, "getitem_identify"), "").replaceAll(" ", ""); //기본 문장과 공백을 제거
+                            System.out.println(Messages.get(Teleporter.class, "true"));
+                            if (identify.equals(Messages.get(Teleporter.class, "true"))) {
+                                identify = "true";
+                            }
                             boolean isIdentified = Boolean.parseBoolean(identify);
 
                             //최종 아이템 지급
@@ -373,9 +378,10 @@ public class Teleporter extends Item {
                 GLog.i("현재 비밀방 개수: " + secretRooms[Dungeon.depth]);
              }
              */
-            if (hero.buff(HorseRiding.RidingCooldown.class) != null) {
-                hero.buff(HorseRiding.RidingCooldown.class).kill();
-            }
+//            if (hero.buff(HorseRiding.RidingCooldown.class) != null) {
+//                hero.buff(HorseRiding.RidingCooldown.class).kill();
+//            }
+            Dungeon.level.drop(Generator.randomWeapon( (Dungeon.depth / 5) + 1), hero.pos).sprite.drop();
         }
     }
 

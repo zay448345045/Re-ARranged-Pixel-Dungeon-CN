@@ -418,6 +418,7 @@ public class WndSettings extends WndTabbed {
 		ColorBlock sep2;
 		CheckBox chkFont;
 		CheckBox chkVibrate;
+		RedButton btnUiSettings;
 
 		@Override
 		protected void createChildren() {
@@ -651,6 +652,127 @@ public class WndSettings extends WndTabbed {
 				chkVibrate.checked(SPDSettings.vibration());
 			}
 			add(chkVibrate);
+			btnUiSettings = new RedButton(Messages.get(this, "ui_settings"), 9){
+				void showConfirmWindow() {
+					ShatteredPixelDungeon.scene().addToFront(new Window(){
+						RedButton confirm;
+						RedButton cancel;
+						RenderedTextBlock uiDesc;
+						{
+							uiDesc = PixelScene.renderTextBlock(Messages.get(WndSettings.UITab.this, "ui_comfirm_desc"), 6);
+							add(uiDesc);
+
+							cancel = new RedButton(Messages.get(WndSettings.UITab.this, "comfirm_no")) {
+								@Override
+								protected void onClick() {
+									hide();
+								}
+							};
+							add(cancel);
+
+							confirm = new RedButton(Messages.get(WndSettings.UITab.this, "comfirm_yes")) {
+								@Override
+								protected void onClick() {
+									Game.instance.finish();
+								}
+							};
+							add(confirm);
+
+							//layout
+							if (PixelScene.landscape()) {
+								resize((int)uiDesc.width(), 0);
+
+								uiDesc.setPos(0, GAP);
+								PixelScene.align(uiDesc);
+								int btnWidth = (int) (width - 2 * GAP) / 2;
+								cancel.setRect(0, uiDesc.bottom()+2*GAP, btnWidth, BTN_HEIGHT);
+								confirm.setRect(cancel.right() + GAP, cancel.top(), btnWidth, BTN_HEIGHT);
+
+								resize((int)uiDesc.right(), (int)confirm.bottom());
+							} else {
+								resize(Math.min((int)uiDesc.width(), 120), 0);
+								uiDesc.maxWidth(120);
+								uiDesc.setPos(0, GAP);
+								PixelScene.align(uiDesc);
+								int btnWidth = (int) (width - 6 * GAP);
+								cancel.setRect(0, uiDesc.bottom()+2*GAP, btnWidth, BTN_HEIGHT);
+								confirm.setRect(cancel.left(), cancel.bottom(), btnWidth, BTN_HEIGHT);
+
+								resize(Math.min((int)uiDesc.right(), 120), (int)confirm.bottom());
+							}
+						}
+					});
+				}
+
+				@Override
+				protected void onClick() {
+					ShatteredPixelDungeon.scene().addToFront(new Window(){
+						RedButton original;
+						RedButton shattered;
+						RedButton blueArchive;
+
+						RenderedTextBlock uiDesc;
+
+						{
+							String uiString;
+							switch (SPDSettings.uiType()) {
+								case 0: default:
+									uiString = Messages.get(WndSettings.UITab.this, "ui_original");
+									break;
+								case 1:
+									uiString = Messages.get(WndSettings.UITab.this, "ui_shattered");
+									break;
+								case 2:
+									uiString = Messages.get(WndSettings.UITab.this, "ui_blue_archive");
+									break;
+							}
+							uiDesc = PixelScene.renderTextBlock(Messages.get(WndSettings.UITab.this, "ui_current") + " " + uiString, 6);
+							add(uiDesc);
+							original = new RedButton(Messages.get(WndSettings.UITab.this, "ui_original")) {
+								@Override
+								protected void onClick() {
+									SPDSettings.uiType(0);
+									showConfirmWindow();
+								}
+							};
+							add(original);
+
+							shattered = new RedButton(Messages.get(WndSettings.UITab.this, "ui_shattered")) {
+								@Override
+								protected void onClick() {
+									SPDSettings.uiType(1);
+									showConfirmWindow();
+								}
+							};
+							add(shattered);
+
+							blueArchive = new RedButton(Messages.get(WndSettings.UITab.this, "ui_blue_archive")) {
+								@Override
+								protected void onClick() {
+									SPDSettings.uiType(2);
+									showConfirmWindow();
+								}
+							};
+							add(blueArchive);
+
+							//layout
+							resize(WIDTH_P, 0);
+
+							int btnWidth = (int) (width);
+							resize((int)uiDesc.width(), 0);
+
+							uiDesc.setPos(0, GAP);
+
+							original.setRect(0, uiDesc.bottom()+2*GAP, btnWidth, BTN_HEIGHT);
+							shattered.setRect(0, original.bottom()+GAP, btnWidth, BTN_HEIGHT);
+							blueArchive.setRect(0, shattered.bottom()+GAP, btnWidth, BTN_HEIGHT);
+
+							resize(WIDTH_P, (int)blueArchive.bottom());
+						}
+					});
+				}
+			};
+			add(btnUiSettings);
 		}
 
 		@Override
@@ -698,6 +820,8 @@ public class WndSettings extends WndTabbed {
 				chkVibrate.setRect(0, chkFont.bottom() + GAP, width, BTN_HEIGHT);
 				height = chkVibrate.bottom();
 			}
+			btnUiSettings.setRect(0, chkVibrate.bottom() + GAP, width, BTN_HEIGHT);
+			height = btnUiSettings.bottom();
 		}
 
 	}
@@ -939,6 +1063,7 @@ public class WndSettings extends WndTabbed {
 		ColorBlock sep3;
 		CheckBox chkIgnoreSilent;
 		CheckBox chkMusicBG;
+		CheckBox chkOldMusic;
 
 		@Override
 		protected void createChildren() {
@@ -1031,6 +1156,65 @@ public class WndSettings extends WndTabbed {
 				chkMusicBG.checked(SPDSettings.playMusicInBackground());
 				add(chkMusicBG);
 			}
+			chkOldMusic = new CheckBox( Messages.get(this, "old_music") ) {
+				@Override
+				protected void onClick() {
+					super.onClick();
+					SPDSettings.oldMusic(!checked());
+					ShatteredPixelDungeon.scene().addToFront(new Window(){
+						RedButton confirm;
+						RedButton cancel;
+						RenderedTextBlock uiDesc;
+						{
+							uiDesc = PixelScene.renderTextBlock(Messages.get(WndSettings.AudioTab.this, "comfirm_desc"), 6);
+							add(uiDesc);
+
+							cancel = new RedButton(Messages.get(WndSettings.UITab.class, "comfirm_no")) {
+								@Override
+								protected void onClick() {
+									hide();
+								}
+							};
+							add(cancel);
+
+							confirm = new RedButton(Messages.get(WndSettings.UITab.class, "comfirm_yes")) {
+								@Override
+								protected void onClick() {
+									Game.instance.finish();
+								}
+							};
+							add(confirm);
+
+							//layout
+							resize((int)uiDesc.width(), 0);
+
+							if (PixelScene.landscape()) {
+								resize((int)uiDesc.width(), 0);
+
+								uiDesc.setPos(0, GAP);
+								PixelScene.align(uiDesc);
+								int btnWidth = (int) (width - 2 * GAP) / 2;
+								cancel.setRect(0, uiDesc.bottom()+2*GAP, btnWidth, BTN_HEIGHT);
+								confirm.setRect(cancel.right() + GAP, cancel.top(), btnWidth, BTN_HEIGHT);
+
+								resize((int)uiDesc.right(), (int)confirm.bottom());
+							} else {
+								resize(Math.min((int)uiDesc.width(), 120), 0);
+								uiDesc.maxWidth(120);
+								uiDesc.setPos(0, GAP);
+								PixelScene.align(uiDesc);
+								int btnWidth = (int) (width - 8 * GAP);
+								cancel.setRect(0, uiDesc.bottom()+2*GAP, btnWidth, BTN_HEIGHT);
+								confirm.setRect(cancel.left(), cancel.bottom(), btnWidth, BTN_HEIGHT);
+
+								resize(Math.min((int)uiDesc.right(), 120), (int)confirm.bottom());
+							}
+						}
+					});
+				}
+			};
+			chkOldMusic.checked(!SPDSettings.oldMusic());
+			add( chkOldMusic );
 		}
 
 		@Override
@@ -1067,14 +1251,18 @@ public class WndSettings extends WndTabbed {
 				sep3.y = chkMuteSFX.bottom() + GAP;
 
 				chkIgnoreSilent.setRect(0, sep3.y + 1 + GAP, width, BTN_HEIGHT);
-				height = chkIgnoreSilent.bottom();
+
+				chkOldMusic.setRect(0, chkIgnoreSilent.bottom() + GAP, width, BTN_HEIGHT);
+				height = chkOldMusic.bottom();
 			} else if (chkMusicBG != null){
 				sep3.size(width, 1);
 				sep3.y = chkMuteSFX.bottom() + GAP;
 
 				chkMusicBG.setRect(0, sep3.y + 1 + GAP, width, BTN_HEIGHT);
-				height = chkMusicBG.bottom();
+				chkOldMusic.setRect(0, chkMusicBG.bottom() + GAP, width, BTN_HEIGHT);
+				height = chkOldMusic.bottom();
 			}
+
 		}
 
 	}

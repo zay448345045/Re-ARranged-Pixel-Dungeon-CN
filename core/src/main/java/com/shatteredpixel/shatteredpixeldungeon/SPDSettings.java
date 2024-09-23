@@ -57,7 +57,7 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_GRID 	    = "visual_grid";
 	public static final String KEY_CAMERA_FOLLOW= "camera_follow";
 	public static final String KEY_SCREEN_SHAKE = "screen_shake";
-	
+
 	public static void fullscreen( boolean value ) {
 		put( KEY_FULLSCREEN, value );
 		
@@ -145,6 +145,7 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_SLOTWATERSKIN= "quickslot_waterskin";
 	public static final String KEY_SYSTEMFONT	= "system_font";
 	public static final String KEY_VIBRATION    = "vibration";
+	public static final String KEY_UI_TYPE		= "ui_type";
 
 	//0 = mobile, 1 = mixed (large without inventory in main UI), 2 = large
 	public static void interfaceSize( int value ){
@@ -221,6 +222,15 @@ public class SPDSettings extends GameSettings {
 		return getBoolean(KEY_VIBRATION, true);
 	}
 
+	public static void uiType(int idx) {
+		put(KEY_UI_TYPE, idx);
+	}
+
+	public static int uiType() {
+		return getInt(KEY_UI_TYPE, 0);
+	}
+
+
 	//Game State
 	
 	public static final String KEY_LAST_CLASS	= "last_class";
@@ -230,6 +240,7 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_INTRO		= "intro";
 
 	public static final String KEY_SUPPORT_NAGGED= "support_nagged";
+	public static final String KEY_VICTORY_NAGGED= "victory_nagged";
 	
 	public static void intro( boolean value ) {
 		put( KEY_INTRO, value );
@@ -277,6 +288,14 @@ public class SPDSettings extends GameSettings {
 
 	public static boolean supportNagged() {
 		return getBoolean(KEY_SUPPORT_NAGGED, false);
+	}
+
+	public static void victoryNagged( boolean value ) {
+		put( KEY_VICTORY_NAGGED, value );
+	}
+
+	public static boolean victoryNagged() {
+		return getBoolean(KEY_VICTORY_NAGGED, false);
 	}
 
 	//Input
@@ -357,7 +376,8 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_SFX_VOL      = "sfx_vol";
 	public static final String KEY_IGNORE_SILENT= "ignore_silent";
 	public static final String KEY_MUSIC_BG     = "music_bg";
-	
+	public static final String KEY_OLD_MUSIC    = "old_music";
+
 	public static void music( boolean value ) {
 		Music.INSTANCE.enable( value );
 		put( KEY_MUSIC, value );
@@ -410,6 +430,15 @@ public class SPDSettings extends GameSettings {
 	public static boolean playMusicInBackground(){
 		return getBoolean( KEY_MUSIC_BG, true);
 	}
+
+	public static void oldMusic( boolean value ) {
+		put( KEY_OLD_MUSIC, value);
+	}
+
+	public static boolean oldMusic(){
+		return getBoolean( KEY_OLD_MUSIC, false);
+	}
+
 	
 	//Languages
 	
@@ -433,7 +462,8 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_WINDOW_WIDTH     = "window_width";
 	public static final String KEY_WINDOW_HEIGHT    = "window_height";
 	public static final String KEY_WINDOW_MAXIMIZED = "window_maximized";
-	
+	public static final String KEY_FULLSCREEN_MONITOR = "fullscreen_monitor";
+
 	public static void windowResolution( Point p ){
 		put(KEY_WINDOW_WIDTH, p.x);
 		put(KEY_WINDOW_HEIGHT, p.y);
@@ -452,5 +482,13 @@ public class SPDSettings extends GameSettings {
 	
 	public static boolean windowMaximized(){
 		return getBoolean( KEY_WINDOW_MAXIMIZED, false );
+	}
+
+	public static void fulLScreenMonitor( int value ){
+		put( KEY_FULLSCREEN_MONITOR, value);
+	}
+
+	public static int fulLScreenMonitor(){
+		return getInt( KEY_FULLSCREEN_MONITOR, 0 );
 	}
 }

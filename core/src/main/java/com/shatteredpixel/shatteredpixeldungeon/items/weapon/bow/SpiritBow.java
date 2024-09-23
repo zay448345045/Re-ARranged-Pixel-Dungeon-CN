@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.DisposableMissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
@@ -141,7 +142,7 @@ public class SpiritBow extends Weapon {
 
 	@Override
 	public String info() {
-		String info = desc();
+		String info = super.info();
 		
 		info += "\n\n" + Messages.get( this, "stats",
 				Math.round(augment.damageFactor(min())),
@@ -220,7 +221,7 @@ public class SpiritBow extends Weapon {
 		if (owner instanceof Hero) {
 			int exStr = ((Hero)owner).STR() - STRReq();
 			if (exStr > 0) {
-				damage += Char.combatRoll( 0, exStr );
+				damage += Hero.heroDamageIntRange( 0, exStr );
 			}
 		}
 
@@ -295,7 +296,7 @@ public class SpiritBow extends Weapon {
 		return new SpiritArrow();
 	}
 	
-	public class SpiritArrow extends MissileWeapon {
+	public class SpiritArrow extends DisposableMissileWeapon {
 		
 		{
 			image = ItemSpriteSheet.SPIRIT_ARROW;

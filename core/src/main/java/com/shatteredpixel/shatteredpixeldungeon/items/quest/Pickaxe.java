@@ -98,7 +98,7 @@ public class Pickaxe extends MeleeWeapon {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (Blacksmith.Quest.completed()) {
+		if (Blacksmith.Quest.completed() && Dungeon.hero.heroClass == HeroClass.ADVENTURER) {
 			actions.add(AC_INFUSE);
 		}
 		if (Blacksmith.Quest.oldMiningQuest()) {
@@ -352,6 +352,11 @@ public class Pickaxe extends MeleeWeapon {
 	public String abilityInfo() {
 		int dmgBoost = 8 + 2*buffedLvl();
 		return Messages.get(this, "ability_desc", augment.damageFactor(min()+dmgBoost), augment.damageFactor(max()+dmgBoost));
+	}
+
+	public String upgradeAbilityStat(int level){
+		int dmgBoost = 8 + 2*level;
+		return augment.damageFactor(min(level)+dmgBoost) + "-" + augment.damageFactor(max(level)+dmgBoost);
 	}
 
 	private static final String BLOODSTAINED = "bloodStained";

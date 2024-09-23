@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.bow.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.DisposableMissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
@@ -323,11 +324,6 @@ public class Gun extends MeleeWeapon {
 			quickReload();
 		}
 
-		if (hero.hasTalent(Talent.BULLET_SAVING) && hero.buff(Talent.BulletSavingCooldown.class) == null) {
-			manualReload(hero.pointsInTalent(Talent.BULLET_SAVING), true);
-			Buff.affect(hero, Talent.BulletSavingCooldown.class, 9f+reloadTime(hero));
-		}
-
 		hero.busy();
 		hero.sprite.operate(hero.pos);
 		Sample.INSTANCE.play(Assets.Sounds.UNLOCK);
@@ -406,7 +402,9 @@ public class Gun extends MeleeWeapon {
 
 		amount = this.magazineMod.magazineFactor(amount);
 
-		amount += hero.pointsInTalent(Talent.LARGER_MAGAZINE);
+		if (hero != null) {
+			amount += hero.pointsInTalent(Talent.LARGER_MAGAZINE);
+		}
 
 		return amount;
 	}
@@ -424,8 +422,11 @@ public class Gun extends MeleeWeapon {
 
 		amount = this.magazineMod.reloadTimeFactor(amount);
 
-		if (user == hero) {
+		if (hero != null && user == hero) {
 			amount -= hero.pointsInTalent(Talent.FAST_RELOAD);
+			if (((Hero)user).heroClass == HeroClass.GUNNER) {
+				amount -= 1;
+			}
 		}
 
 		amount = Math.max(0, amount);
@@ -458,32 +459,54 @@ public class Gun extends MeleeWeapon {
 
 	@Override
 	public int max(int lvl) {
-		int damage = 3*(tier()+1) +
-					 lvl*(tier()+1); //근접 무기로서의 최대 데미지
+		int damage;
+		if (Dungeon.hero != null) {
+			damage = 3*(tier()+1) +
+					lvl*(tier()+1) +
+					Dungeon.hero.pointsInTalent(Talent.CLOSE_COMBAT); //근접 무기로서의 최대 데미지
+		} else {
+			damage = 3*(tier()+1) +
+					lvl*(tier()+1);
+		}
 		return damage;
 
 	}
 
-	public int bulletMin(int lvl) {
-		return tier() +
-				lvl +
-				RingOfSharpshooting.levelDamageBonus(hero);
+	protected int bulletMin(int lvl) {
+		if (Dungeon.hero != null) {
+			return tier() +
+					lvl +
+					RingOfSharpshooting.levelDamageBonus(hero);
+		} else {
+			return tier() +
+					lvl;
+		}
+
 	}
 
-	public int bulletMin() {
+	protected int bulletMin() {
 		return bulletMin(this.buffedLvl());
 	}
 
 	//need to be overridden
-	public int bulletMax(int lvl) {
-		return 0; //총알의 최대 데미지
+	protected int baseBulletMax(int lvl) {
+		return 0;
 	}
 
-	public int bulletMax() {
+	protected int bulletMax(int lvl) {
+		if (Dungeon.hero != null) {
+			return baseBulletMax(lvl) +
+					RingOfSharpshooting.levelDamageBonus(hero);
+		} else {
+			return baseBulletMax(lvl);
+		}
+	}
+
+	protected int bulletMax() {
 		return bulletMax(this.buffedLvl());
 	}
 
-	public int bulletDamage() {
+	protected int bulletDamage() {
 		int damage = Random.NormalIntRange(bulletMin(), bulletMax());
 
 		damage = augment.damageFactor(damage);  //증강에 따라 변화하는 효과
@@ -611,7 +634,7 @@ public class Gun extends MeleeWeapon {
 		return new Bullet();
 	}
 
-	public class Bullet extends MissileWeapon {
+	public class Bullet extends DisposableMissileWeapon {
 
 		{
 			hitSound = Assets.Sounds.PUFF;
@@ -650,7 +673,7 @@ public class Gun extends MeleeWeapon {
 			}
 
 			int distance = Dungeon.level.distance(attacker.pos, defender.pos) - 1;
-			float multiplier = Math.min(2f, (float)Math.pow(1 + 0.025f * hero.pointsInTalent(Talent.RANGED_SNIPING), distance));
+			float multiplier = Math.min(2.5f, (float)Math.pow(1 + 0.025f * hero.pointsInTalent(Talent.RANGED_SNIPING), distance));
 			damage = Math.round(damage * multiplier);
 
 			if (hero.buff(Riot.RiotTracker.class) != null) {
@@ -683,7 +706,7 @@ public class Gun extends MeleeWeapon {
 		public float delayFactor(Char user) {
 			float speed = Gun.this.delayFactor(user) * shootingSpeed;
 			if (hero.buff(Riot.RiotTracker.class) != null) {
-				speed *= 2;
+				speed *= 0.5f;
 			}
 			return speed;
 		}

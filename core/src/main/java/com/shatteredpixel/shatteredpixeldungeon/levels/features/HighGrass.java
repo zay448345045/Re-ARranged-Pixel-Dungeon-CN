@@ -153,6 +153,12 @@ public class HighGrass {
 				
 				// Dew, scales from 1/6 to 1/4
 				lootChance = 1/(6f -naturalismLevel/2f);
+
+				//grassy levels spawn half as much dew
+				if (Dungeon.level != null && Dungeon.level.feeling == Level.Feeling.GRASS){
+					lootChance /= 2;
+				}
+
 				if (Random.Float() < lootChance) {
 					level.drop(new Dewdrop(), pos).sprite.drop();
 				}
@@ -162,7 +168,7 @@ public class HighGrass {
 			if (ch instanceof Hero) {
 				Hero hero = (Hero) ch;
 				if ((hero.belongings.armor() != null && hero.belongings.armor().hasGlyph(Camouflage.class, hero))
-						|| (hero.belongings.getItem(KnightsShield.class) != null && hero.belongings.getItem(KnightsShield.class).hasGlyph(Brimstone.class, hero))) {
+						|| (hero.belongings.getItem(KnightsShield.class) != null && hero.belongings.getItem(KnightsShield.class).hasGlyph(Camouflage.class, hero))) {
 					Camouflage.activate(hero, hero.belongings.armor.buffedLvl());
 				}
 			} else if (ch instanceof DriedRose.GhostHero){
