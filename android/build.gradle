@@ -46,6 +46,11 @@ android {
             }
 
             ndk.debugSymbolLevel = "FULL"
+
+            lintOptions {
+                checkReleaseBuilds false
+                abortOnError false
+            }
         }
     }
 

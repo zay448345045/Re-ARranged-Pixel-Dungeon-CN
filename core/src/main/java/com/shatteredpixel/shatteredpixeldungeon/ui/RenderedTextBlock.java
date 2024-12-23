@@ -54,6 +54,8 @@ public class RenderedTextBlock extends Component {
 	public static final int CENTER_ALIGN = 2;
 	public static final int RIGHT_ALIGN = 3;
 	private int alignment = LEFT_ALIGN;
+
+    public static boolean cnLocalizationFlag = false;
 	
 	public RenderedTextBlock(int size){
 		this.size = size;
@@ -231,7 +233,7 @@ public class RenderedTextBlock extends Component {
 
 				//this is so that words split only by highlighting are still grouped in layout
 				//Chinese/Japanese always render every character separately without spaces however
-				while (Messages.lang() != Languages.CHINESE && Messages.lang() != Languages.JAPANESE
+				while (Messages.lang() != Languages.CHINESE && Messages.lang() != Languages.JAPANESE && !cnLocalizationFlag
 						&& j < words.size() && words.get(j) != SPACE && words.get(j) != NEWLINE){
 					fullWidth += words.get(j).width() - 0.667f;
 					j++;

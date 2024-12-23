@@ -2,28 +2,25 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url = uri("https://storage.googleapis.com/r8-releases/raw")
-        }
     }
     dependencies {
-        //gradle version packaged with AGP 8.5 causes crashes on Android 4.4-
-        //this won't be needed once the bundled R8 version is 8.7.11+ (should happen with AGP 8.6)
-        classpath 'com.android.tools:r8:8.7.11'
-        classpath 'com.android.tools.build:gradle:8.5.2'
+        //the R8 version bundled with AGP 8.1.0+ causes crashes on very old Android versions
+
+        //This affects ICS and Lollipop at least, maybe also KitKat
+        classpath 'com.android.tools.build:gradle:8.0.2'
     }
 }
 
 allprojects {
 
     ext {
-        appName = 'Rearranged Pixel Dungeon'
-        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungon'
+        appName = 'Rearranged Pixel Dungeon CN'
+        appPackageName = 'com.rearrangedpixel.rearrangedpixeldungoncn'
 
         appVersionCode = 802
         appVersionName = '2.5.4'
         appVersionCode += 33
-        appVersionName += '_based_3.17.0'
+        appVersionName += '_based_3.17.0_cn'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
@@ -33,7 +30,7 @@ allprojects {
 
         gdxVersion = '1.12.1'
         gdxControllersVersion = '2.2.4-SNAPSHOT'
-        robovmVersion = '2.3.21'
+        robovmVersion = '2.3.20'
     }
     version = appVersionName
 

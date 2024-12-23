@@ -27,6 +27,9 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 
 public class WndMessage extends Window {
 
+    private static final int WIDTH_P = 120;
+    private static final int WIDTH_L = 144;
+
 	private static final int WIDTH_MIN = 120;
 	private static final int WIDTH_MAX = 220;
 	private static final int MARGIN = 4;
@@ -53,4 +56,22 @@ public class WndMessage extends Window {
 			(int)info.width() + MARGIN * 2,
 			(int)info.height() + MARGIN * 2 );
 	}
+
+    public WndMessage( String text , int size) {
+
+        super();
+
+        RenderedTextBlock.cnLocalizationFlag = true;
+
+        RenderedTextBlock info = PixelScene.renderTextBlock( text, size );
+        info.maxWidth((PixelScene.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2);
+        info.setPos(MARGIN, MARGIN);
+        add( info );
+
+        resize(
+                (int)info.width() + MARGIN * 2,
+                (int)info.height() + MARGIN * 2 );
+
+        RenderedTextBlock.cnLocalizationFlag = false;
+    }
 }
