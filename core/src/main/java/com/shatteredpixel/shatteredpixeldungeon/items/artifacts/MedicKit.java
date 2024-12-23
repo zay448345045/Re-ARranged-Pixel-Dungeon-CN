@@ -168,7 +168,7 @@ public class MedicKit extends Artifact {
             if (i == 0) {
                 list.append(immuneList.get(i));
             } else {
-                list.append(", ").append(immuneList.get(i));
+                list.append(",").append(immuneList.get(i));
             }
         }
         return list.toString();
