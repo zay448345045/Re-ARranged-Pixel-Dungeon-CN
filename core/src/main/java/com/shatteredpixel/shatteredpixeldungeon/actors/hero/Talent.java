@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GreaterHaste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HorseRiding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.InfiniteBullet;
@@ -50,6 +51,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PhysicalEmpower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RadioactiveMutation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
@@ -380,7 +382,7 @@ public enum Talent {
 	//Gunner T1
 	RELOADING_MEAL				(0,  6),	//식사 시 장착한 총기 재장전/1발 더 재장전
 	GUNNERS_INTUITION			(1,  6),	//총기를 장착 시 감정/습득 시 저주 여부 감정
-	SPEEDY_MOVE					(2,  6),	//적을 처음 공격하면 신속 2/3턴
+	SPEEDY_MOVE					(2,  6),	//적을 처음 공격하면 초신속 2/3턴
 	SAFE_RELOAD					(3,  6),	//재장전 시 3/5의 방어막을 얻음
 	CLOSE_COMBAT				(4,  6),	//총기 근접 공격력이 0-4/0-6 증가
 	//Gunner T2
@@ -554,7 +556,7 @@ public enum Talent {
 	DEATHS_FEAR					(18, 9, 3),
 	//Horseman T3
 	SHOCKWAVE					(19, 9, 3),
-	CALL_OF_MASTER				(20, 9, 3),
+	ARMORED_HORSE				(20, 9, 3),
 	DASH_ENHANCE				(21, 9, 3),
 	BUFFER						(22, 9, 3),
 	PARKOUR						(23, 9, 3),
@@ -1442,11 +1444,6 @@ public enum Talent {
 			}
 		}
 
-		//knight
-		if (talent == CALL_OF_MASTER && hero.buff(HorseRiding.RidingCooldown.class) != null) {
-			hero.buff(HorseRiding.RidingCooldown.class).updateCooldown();
-		}
-
 		//medic
 		if (talent == DOCTORS_INTUITION) {
 			identifyPotions(1+2*hero.pointsInTalent(talent));
@@ -1550,7 +1547,7 @@ public enum Talent {
 			Buff.affect(hero, ArmorEmpower.class).set(3, 1+hero.pointsInTalent(Talent.TOUGH_MEAL));
 		}
 		if (hero.hasTalent(Talent.IMPREGNABLE_MEAL)) {
-			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.IMPREGNABLE_MEAL), 15f);
+			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.IMPREGNABLE_MEAL), 3);
 		}
 		if (hero.hasTalent(Talent.HEALING_MEAL)) { // 식사 시 디버프 제거 / 디버프가 없을 경우 3의 체력을 회복
 			if (hero.isHeroDebuffed()) {
@@ -1702,8 +1699,8 @@ public enum Talent {
 			Buff.affect(hero, Sheath.CertainCrit.class).set((int)(factor * hero.pointsInTalent(Talent.INSCRIBED_LETHALITY)));
 		}
 		if (hero.hasTalent(Talent.SMITHING_SPELL)) {
-			Buff.affect(hero, WeaponEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), 10f*factor);
-			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), 10f*factor);
+			Buff.affect(hero, WeaponEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), Math.round(10*factor));
+			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), Math.round(10*factor));
 		}
 	}
 
@@ -1857,7 +1854,15 @@ public enum Talent {
 			Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
 		}
 
+		if (hero.hasTalent(Talent.SKILLED_HAND) && hero.heroClass != HeroClass.DUELIST) {
+			dmg += Random.NormalIntRange(0, 1+hero.pointsInTalent(Talent.SKILLED_HAND));
+		}
+
 		if (hero.hasTalent(Talent.NATURE_FRIENDLY) && (level.map[hero.pos] == Terrain.HIGH_GRASS || level.map[hero.pos] == Terrain.FURROWED_GRASS)) {
+			dmg += Random.Int(1, hero.pointsInTalent(Talent.NATURE_FRIENDLY));
+		}
+
+		if (hero.hasTalent(Talent.NATURE_FRIENDLY) && (level.map[hero.pos] == Terrain.GRASS) && hero.heroClass != HeroClass.ADVENTURER) {
 			dmg += Random.Int(1, hero.pointsInTalent(Talent.NATURE_FRIENDLY));
 		}
 
@@ -1872,7 +1877,7 @@ public enum Talent {
 		//attacking procs
 		if (hero.hasTalent(SPEEDY_MOVE) && enemy instanceof Mob && enemy.buff(SpeedyMoveTracker.class) == null){
 			Buff.affect(enemy, SpeedyMoveTracker.class);
-			Buff.prolong(hero, Haste.class, 1f + hero.pointsInTalent(SPEEDY_MOVE));
+			Buff.affect(hero, GreaterHaste.class).set(1 + hero.pointsInTalent(SPEEDY_MOVE));
 		}
 
 		if (enemy instanceof Mob && ((Mob) enemy).surprisedBy(hero)) {
@@ -1907,7 +1912,7 @@ public enum Talent {
 
 		if (hero.hasTalent(Talent.WAR_CRY) && enemy.buff(WarCryTracker.class) == null) {
 			Buff.affect(enemy, WarCryTracker.class);
-			Buff.prolong(hero, Adrenaline.class, 1+hero.pointsInTalent(Talent.WAR_CRY));
+			Buff.prolong(hero, Adrenaline.class, hero.pointsInTalent(Talent.WAR_CRY));
 		}
 
 		if (hero.hasTalent(Talent.BLOOMING_WEAPON)
@@ -1975,6 +1980,12 @@ public enum Talent {
 			int duration = hero.pointsInTalent(Talent.TARGET_SET);
 			if (enemy.alignment != Char.Alignment.ENEMY) duration *= 5;
 			Buff.prolong(enemy, StoneOfAggression.Aggression.class, duration);
+		}
+
+		if (hero.hasTalent(Talent.RADIATION) && hero.heroClass != HeroClass.MEDIC && enemy.buff(RadioactiveMutation.class) == null) {
+			if (Random.Float() < 0.03f) {
+				Buff.affect(enemy, RadioactiveMutation.class).set(6-hero.pointsInTalent(Talent.RADIATION));
+			}
 		}
 		return dmg;
 	}
@@ -2346,7 +2357,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, ARMY_OF_DEATH, DEATHS_CHILL, OVERCOME, RESENTMENT, UNDEAD, DEATHS_FEAR );
 				break;
 			case HORSEMAN:
-				Collections.addAll(tierTalents, SHOCKWAVE, CALL_OF_MASTER, DASH_ENHANCE, BUFFER, PARKOUR, PILOTING);
+				Collections.addAll(tierTalents, SHOCKWAVE, ARMORED_HORSE, DASH_ENHANCE, BUFFER, PARKOUR, PILOTING);
 				break;
 			case CRUSADER:
 				Collections.addAll(tierTalents, HOLY_SHIELD, PRAY_FOR_DEAD, JUDGEMENT, CLEANSING_PRAY, PUNISHMENT, ANTI_DEMON);

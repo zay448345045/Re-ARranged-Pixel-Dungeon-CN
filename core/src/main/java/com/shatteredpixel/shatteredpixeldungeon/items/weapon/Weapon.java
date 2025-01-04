@@ -273,13 +273,6 @@ abstract public class Weapon extends KindOfWeapon {
 			}
 		}
 
-		if (hero.hasTalent(Talent.PARKOUR) && hero.belongings.attackingWeapon() instanceof MeleeWeapon) {
-			int aEnc = ((MeleeWeapon)hero.belongings.attackingWeapon()).STRReq() - hero.STR();
-			if (aEnc < 0) {
-				multi *= Math.pow(1+0.025f*hero.pointsInTalent(Talent.PARKOUR), -aEnc);
-			}
-		}
-
 		if (hero.hasTalent(Talent.QUICK_FOLLOWUP) && hero.buff(Talent.QuickFollowupTracker.class) != null) {
 			multi *= 1+hero.pointsInTalent(Talent.QUICK_FOLLOWUP)/3f;
 		}
@@ -521,6 +514,10 @@ abstract public class Weapon extends KindOfWeapon {
 				multi = rage.enchantFactor(multi);
 			}
 
+			if (attacker instanceof Hero && ((Hero) attacker).belongings.attackingWeapon() instanceof Gun.Bullet) {
+				multi *= ((Gun.Bullet) ((Hero) attacker).belongings.attackingWeapon()).whatEnchant().enchantFactor();
+			}
+
 			if (attacker.buff(RunicBlade.RunicSlashTracker.class) != null){
 				multi += attacker.buff(RunicBlade.RunicSlashTracker.class).boost;
 				attacker.buff(RunicBlade.RunicSlashTracker.class).detach();
@@ -545,12 +542,12 @@ abstract public class Weapon extends KindOfWeapon {
 				multi += 0.2f;
 			}
 
-			if (attacker instanceof Hero && ((Hero) attacker).belongings.attackingWeapon() instanceof Gun.Bullet) {
-				multi *= ((Gun.Bullet) ((Hero) attacker).belongings.attackingWeapon()).whatEnchant().enchantFactor();
-			}
-
 			if (attacker instanceof Hero && attacker.buff(Tackle.MysticalTackleTracker.class) != null) {
 				multi += 0.5f * Dungeon.hero.pointsInTalent(Talent.MYSTICAL_TACKLE);
+			}
+
+			if (hero.hasTalent(Talent.HIGH_POWER) && hero.heroClass != HeroClass.MEDIC) {
+				multi += 0.1f * hero.pointsInTalent(Talent.HIGH_POWER);
 			}
 
 			return multi;

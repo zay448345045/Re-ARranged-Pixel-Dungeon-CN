@@ -177,14 +177,7 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 		//talents that can only be used by one hero class
 		private static HashMap<Talent, HeroClass> restrictedTalents = new HashMap<>();
 		static {
-			restrictedTalents.put(Talent.SKILLED_HAND, HeroClass.DUELIST);
-			restrictedTalents.put(Talent.ACCUMULATION, HeroClass.DUELIST);
-			restrictedTalents.put(Talent.DRAGONS_EYE, HeroClass.SAMURAI);
 
-//			restrictedTalents.put(Talent.PLANT_SHIELD, HeroClass.PLANTER);
-//			restrictedTalents.put(Talent.FLOWER_BED, HeroClass.PLANTER);
-//			restrictedTalents.put(Talent.FARMER, HeroClass.PLANTER);
-//
 //			restrictedTalents.put(Talent.CRAFTMANS_SKILLS, HeroClass.KNIGHT);
 		}
 
@@ -239,10 +232,10 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 						if (curTalentsAtTier.contains(talent)){
 							clsTalentsAtTier.remove(talent);
 						}
-						if (restrictedTalents.containsKey(talent)
-								&& restrictedTalents.get(talent) != curUser.heroClass){
-							clsTalentsAtTier.remove(talent);
-						}
+//						if (restrictedTalents.containsKey(talent)
+//								&& restrictedTalents.get(talent) != curUser.heroClass){
+//							clsTalentsAtTier.remove(talent);
+//						}
 					}
 				}
 				if (!replacingIsInSet && !clsTalentsAtTier.isEmpty()) {
