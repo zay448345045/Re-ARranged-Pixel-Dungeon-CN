@@ -372,6 +372,7 @@ public class SeedFinder {
 		GamesInProgress.selectedClass = HeroClass.WARRIOR;
 		SPDSettings.challenges(challenges);
 		Dungeon.init();
+        Dungeon.initSeed();
 		StringBuilder result = new StringBuilder(Messages.get(this, "seed") + DungeonSeed.convertToCode(Dungeon.seed) + " (" + Dungeon.seed + ") " + Messages.get(this, "items") + ":\n\n"+Messages.get(this, "css")+Dungeon.challenges+"\n\n");
 
 		blacklist = Arrays.asList(Gold.class, Dewdrop.class, IronKey.class, GoldenKey.class, CrystalKey.class, EnergyCrystal.class,

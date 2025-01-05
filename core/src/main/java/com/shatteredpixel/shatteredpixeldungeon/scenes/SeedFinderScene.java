@@ -70,6 +70,10 @@ public class SeedFinderScene extends PixelScene {
 		archs.setSize( w, h );
 		add( archs );
 
+        ExitButton btnExit = new ExitButton();
+        btnExit.setPos(w - btnExit.width(), 0);
+        add(btnExit);
+
 		Image title = BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON );
 		add( title );
 
@@ -178,12 +182,6 @@ public class SeedFinderScene extends PixelScene {
 		version.x = w - version.width() - 4;
 		version.y = h - version.height() - 2;
 		add( version );
-
-		if (DeviceCompat.isDesktop()) {
-			ExitButton btnExit = new ExitButton();
-			btnExit.setPos( w - btnExit.width(), 0 );
-			add( btnExit );
-		}
 
 		fadeIn();
 	}
