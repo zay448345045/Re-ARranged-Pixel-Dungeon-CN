@@ -22,8 +22,10 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.seedfinder.SeedFindLogScene;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
@@ -490,5 +492,132 @@ public class SPDSettings extends GameSettings {
 
 	public static int fulLScreenMonitor(){
 		return getInt( KEY_FULLSCREEN_MONITOR, 0 );
+	}
+
+
+	//Seedfinder
+
+	public static final String KEY_FLOORS	= "number_of_floors";
+	public static final String KEY_PLUSSEACH = "use_rooms";
+	public static final String KEY_IGNOREBLACKLIST	= "ignore_blacklist";
+
+	public static final String KEY_LOGTRINKETS	= "logging_option_trinkets";
+	public static final String KEY_LOGEQUIPMENT	= "logging_option_equipment";
+	public static final String KEY_LOGSCROLLS	= "logging_option_scrolls";
+	public static final String KEY_LOGPOTIONS= "logging_option_potions";
+	public static final String KEY_LOGRINGS	= "logging_option_rings";
+	public static final String KEY_LOGWANDS= "logging_option_wands";
+	public static final String KEY_LOGARTIFACTS	= "logging_option_artifacts";
+	public static final String KEY_LOGMISC= "logging_option_other";
+
+	public static final String KEY_SEEDITEMS_TEXT= "remember_seeditems_text";
+	public static final String KEY_SEEDINPUT_TEXT= "remember_seedinput_text";
+	public static final String KEY_CONDITION= "seedfinder_condition";
+
+	public static void seedfinderFloors( int value ) {
+		put( KEY_FLOORS, value );
+	}
+
+	public static int seedfinderFloors() {
+		return getInt( KEY_FLOORS, 8, 1, 30 );
+	}
+
+	public static void seeditemsText(String value) {
+		put(KEY_SEEDITEMS_TEXT, value);
+	}
+
+	public static String seeditemsText() {
+		return getString(KEY_SEEDITEMS_TEXT, Messages.get(SeedFindLogScene.class,"initial_value",seedfinderFloors()));
+	}
+
+	public static void seedinputText(String value) {
+		put(KEY_SEEDINPUT_TEXT, value);
+	}
+
+	public static String seedinputText() {
+		return getString(KEY_SEEDINPUT_TEXT, "");
+	}
+
+	public static void seedfinderConditionANY(boolean value) {
+		put(KEY_CONDITION, value);
+	}
+
+	public static boolean seedfinderConditionANY() {
+		return getBoolean(KEY_CONDITION, false);
+	}
+
+	public static void PlusSearch( boolean value ) {
+		put(KEY_PLUSSEACH, value );
+	}
+
+	public static boolean PlusSearch() {
+		return getBoolean(KEY_PLUSSEACH, false );
+	}
+
+	public static void ignoreBlacklist( boolean value ) {
+		put( KEY_IGNOREBLACKLIST, value );
+	}
+
+	public static boolean ignoreBlacklist() {
+		return getBoolean( KEY_IGNOREBLACKLIST, false );
+	}
+
+	public static void logTrinkets( boolean value ) {
+		put( KEY_LOGTRINKETS, value );
+	}
+
+	public static boolean logTrinkets() {
+		return getBoolean( KEY_LOGTRINKETS, true );
+	}
+
+	public static void logEquipment( boolean value ) {
+		put( KEY_LOGEQUIPMENT, value );
+	}
+
+	public static boolean logEquipment() {
+		return getBoolean( KEY_LOGEQUIPMENT, true );
+	}
+
+	public static void logScrolls( boolean value ) {
+		put( KEY_LOGSCROLLS, value );
+	}
+
+	public static boolean logScrolls() {
+		return getBoolean( KEY_LOGSCROLLS, true );
+	}
+	public static void logPotions( boolean value ) {
+		put( KEY_LOGPOTIONS, value );
+	}
+
+	public static boolean logPotions() {
+		return getBoolean( KEY_LOGPOTIONS, true );
+	}
+	public static void logRings( boolean value ) {
+		put( KEY_LOGRINGS, value );
+	}
+
+	public static boolean logRings() {
+		return getBoolean( KEY_LOGRINGS, true );
+	}
+	public static void logWands( boolean value ) {
+		put( KEY_LOGWANDS, value );
+	}
+
+	public static boolean logWands() {
+		return getBoolean( KEY_LOGWANDS, true );
+	}
+	public static void logArtifacts( boolean value ) {
+		put( KEY_LOGARTIFACTS, value );
+	}
+
+	public static boolean logArtifacts() {
+		return getBoolean( KEY_LOGARTIFACTS, true );
+	}
+	public static void logMisc( boolean value ) {
+		put( KEY_LOGMISC, value );
+	}
+
+	public static boolean logMisc() {
+		return getBoolean( KEY_LOGMISC, false );
 	}
 }

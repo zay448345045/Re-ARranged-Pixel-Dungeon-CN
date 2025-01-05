@@ -668,7 +668,7 @@ public class HeroSelectScene extends PixelScene {
 			StyledButton btnSeedTest = new StyledButton(Chrome.Type.BLANK, Messages.get(HeroSelectScene.class, "seed_find"), 6){
 				@Override
 				protected void onClick() {
-					ShatteredPixelDungeon.switchScene( SeedFindScene.class );
+					//ShatteredPixelDungeon.switchScene( SeedFindScene.class );
 				}
 			};
 			btnSeedTest.icon(Icons.get(Icons.MAGNIFY));
@@ -679,7 +679,7 @@ public class HeroSelectScene extends PixelScene {
 			StyledButton btnSeedAnalysis = new StyledButton(Chrome.Type.BLANK, Messages.get(HeroSelectScene.class, "seed_analysis"), 6){
 				@Override
 				protected void onClick() {
-					ShatteredPixelDungeon.switchScene( SeedAnalysisScene.class );
+					//ShatteredPixelDungeon.switchScene( SeedAnalysisScene.class );
 				}
 			};
 			btnSeedAnalysis.icon(Icons.get(Icons.NEWS));
