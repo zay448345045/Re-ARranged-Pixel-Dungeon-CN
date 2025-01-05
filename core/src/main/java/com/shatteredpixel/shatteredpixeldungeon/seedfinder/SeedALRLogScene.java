@@ -7,6 +7,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SeedFinderScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
+import com.shatteredpixel.shatteredpixeldungeon.seedfinder.SeedFinder;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -17,12 +18,6 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndTextInput;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.ui.Component;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class SeedALRLogScene extends PixelScene {
 
@@ -61,22 +56,14 @@ public class SeedALRLogScene extends PixelScene {
         content.clear();
 
         ShatteredPixelDungeon.scene().addToFront( wndTextInput = new WndTextInput(Messages.get(this, "title"), Messages.get(this, "body"), Messages.get(this, "initial_value", SPDSettings.seedfinderFloors()), 1000, true, Messages.get(this, "clear"),null) {
-
-
-            private static final long SECOND = 1000;
-            private static final long MINUTE = 60 * SECOND;
-            private static final long HOUR = 60 * MINUTE;
-            private static final long DAY = 24 * HOUR;
-
             @Override
             public void onSelect(boolean positive, String text) {
                 if (positive) {
 
-                    long seed = SPDSettings.lastDaily() + DungeonSeed.TOTAL_SEEDS;
-                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ROOT);
-                    format.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    text = DungeonSeed.formatText(text);
+                    long seed = DungeonSeed.convertFromText(text);
 
-                    r = PixelScene.renderTextBlock("少女祈祷中……",9);
+                    r = PixelScene.renderTextBlock("少女祈祷中......",9);
                     r.maxWidth(w - 40);
                     r.setPos(width/2f,20);
                     ShatteredPixelDungeon.scene().addToFront(r);
