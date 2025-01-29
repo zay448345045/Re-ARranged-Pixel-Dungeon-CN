@@ -1070,7 +1070,7 @@ public class Badges {
 	}
 
 	public static void validateGunnerUnlock() {
-		if (Statistics.soldierKilled && !isUnlocked(Badge.UNLOCK_GUNNER)) {
+		if (Statistics.gunModified && !isUnlocked(Badge.UNLOCK_GUNNER)) {
 			displayBadge(Badge.UNLOCK_GUNNER);
 		}
 	}
@@ -1094,7 +1094,7 @@ public class Badges {
 	}
 
 	public static void validateMedicUnlock() {
-		if (Statistics.rebelKilled && !isUnlocked(Badge.UNLOCK_MEDIC)) {
+		if (Statistics.pillsMade > 4 && !isUnlocked(Badge.UNLOCK_MEDIC)) {
 			displayBadge(Badge.UNLOCK_MEDIC);
 		}
 	}

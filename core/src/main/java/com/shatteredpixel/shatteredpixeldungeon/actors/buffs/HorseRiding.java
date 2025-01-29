@@ -103,7 +103,7 @@ public class HorseRiding extends Buff implements ActionIndicator.Action, Hero.Do
         }
     }
 
-    public int drRoll() {
+    public static int drRoll() {
         int baseDr = Random.NormalIntRange(2, 16); //기본 방어력: 2~16
         return baseDr + Random.NormalIntRange(Dungeon.hero.pointsInTalent(Talent.ARMORED_HORSE), 8*Dungeon.hero.pointsInTalent(Talent.ARMORED_HORSE)); //추가 방어력: 특성 레벨~8*특성 레벨
     }
@@ -189,6 +189,7 @@ public class HorseRiding extends Buff implements ActionIndicator.Action, Hero.Do
                 spawnHorse();
             } else {
                 Hero hero = (Hero) target;
+                Invisibility.dispel();
                 Ballistica dash = new Ballistica(hero.pos, cell, Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID);
 //                if (dash.collisionPos.equals(cell)){
 //                    GLog.w(Messages.get(MeleeWeapon.class, "dash_bad_position"));
@@ -213,7 +214,7 @@ public class HorseRiding extends Buff implements ActionIndicator.Action, Hero.Do
                     }
                 }
                 for (Char enemyOnDirection : chars) {
-                    hero.attack(enemyOnDirection, 1f+0.2f*hero.pointsInTalent(Talent.DASH_ENHANCE), 1, Char.INFINITE_ACCURACY);
+                    hero.attack(enemyOnDirection, 1f+0.2f*hero.pointsInTalent(Talent.DASH_ENHANCE), 1, 1);
                 }
 
                 hero.sprite.jump(hero.pos, finalCell, 0, 0.1f, new Callback() {
@@ -412,9 +413,7 @@ public class HorseRiding extends Buff implements ActionIndicator.Action, Hero.Do
 
         @Override
         public int drRoll() {
-            int baseDr = Random.NormalIntRange(2, 16); //기본 방어력: 2~16
-            return baseDr + Random.NormalIntRange(Dungeon.hero.pointsInTalent(Talent.ARMORED_HORSE), 8*Dungeon.hero.pointsInTalent(Talent.ARMORED_HORSE)); //추가 방어력: 특성 레벨~8*특성 레벨
-            //return HorseRiding.this.drRoll();
+            return HorseRiding.drRoll();
         }
     }
 
