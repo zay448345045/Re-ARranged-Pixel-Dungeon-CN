@@ -1,17 +1,17 @@
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.bow.TacticalBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.gun.Gun;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -66,7 +66,7 @@ public class GunSmithingTool extends Item {
     protected Class<?extends Bag> preferredBag = Belongings.Backpack.class;
 
     protected boolean usableOnItem( Item item ){
-        return item instanceof Gun;
+        return item instanceof Gun || item instanceof TacticalBow;
     }
 
     protected static void onItemSelected() {
@@ -79,6 +79,9 @@ public class GunSmithingTool extends Item {
         Invisibility.dispel();
 
         updateQuickslot();
+
+        Statistics.gunModified = true;
+        Badges.validateGunnerUnlock();
 
         Item tool = Dungeon.hero.belongings.getItem(GunSmithingTool.class);
         if (tool != null) {
@@ -341,7 +344,12 @@ public class GunSmithingTool extends Item {
             }
 
             if (item != null && itemSelectable(item)) {
-                GameScene.show(new WndModSelect((Gun)item));
+                if (item instanceof TacticalBow) {
+                    ((TacticalBow) item).modify();
+                    onItemSelected();
+                } else {
+                    GameScene.show(new WndModSelect((Gun)item));
+                }
             }
         }
     };

@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GreaterHaste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HorseRiding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.InfiniteBullet;
@@ -50,6 +51,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PhysicalEmpower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RadioactiveMutation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
@@ -75,10 +77,17 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
+import com.shatteredpixel.shatteredpixeldungeon.items.pills.Pill;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.ExoticPotion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ShardOfOblivion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
@@ -94,10 +103,15 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TalentIcon;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -105,6 +119,7 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -367,7 +382,7 @@ public enum Talent {
 	//Gunner T1
 	RELOADING_MEAL				(0,  6),	//식사 시 장착한 총기 재장전/1발 더 재장전
 	GUNNERS_INTUITION			(1,  6),	//총기를 장착 시 감정/습득 시 저주 여부 감정
-	SPEEDY_MOVE					(2,  6),	//적을 처음 공격하면 신속 2/3턴
+	SPEEDY_MOVE					(2,  6),	//적을 처음 공격하면 초신속 2/3턴
 	SAFE_RELOAD					(3,  6),	//재장전 시 3/5의 방어막을 얻음
 	CLOSE_COMBAT				(4,  6),	//총기 근접 공격력이 0-4/0-6 증가
 	//Gunner T2
@@ -419,7 +434,7 @@ public enum Talent {
 	MASTERS_INTUITION			(1, 7),	//총기를 제외한 근접 무기 장착 시 즉시 감정/총기를 제외한 근접 무기 획득 시 저주 여부 감정
 	DRAWING_ENHANCE				(2, 7),	//발도술 공격이 2/3의 추가 피해를 입힘
 	PARRING						(3, 7),	//방어력 0-2/0-3 증가
-	ADRENALINE_SURGE			(4, 7),	//적 처치 시 2/3턴의 아드레날린 획득
+	ADRENALINE_SURGE			(4, 7),	//적 처치 시 3/5턴의 아드레날린 획득
 	//Samurai T2
 	CRITICAL_MEAL				(5, 7),	//식사에 1턴만 소모, 식사 시 다음 1/2회의 물리 공격에 반드시 치명타 발생
 	INSCRIBED_LETHALITY			(6, 7),	//주문서 사용 시 다음 1/2회의 물리 공격에 반드시 치명타 발생
@@ -541,7 +556,7 @@ public enum Talent {
 	DEATHS_FEAR					(18, 9, 3),
 	//Horseman T3
 	SHOCKWAVE					(19, 9, 3),
-	CALL_OF_MASTER				(20, 9, 3),
+	ARMORED_HORSE				(20, 9, 3),
 	DASH_ENHANCE				(21, 9, 3),
 	BUFFER						(22, 9, 3),
 	PARKOUR						(23, 9, 3),
@@ -566,8 +581,55 @@ public enum Talent {
 	ANKH_ENHANCE				(38, 9, 4),
 	COMPLETE_ANKH				(39, 9, 4),
 
-
-
+	//Medic T1
+	SCAR_ATTACK					(0, 10),
+	DOCTORS_INTUITION			(1, 10),
+	FINISH_ATTACK				(2, 10),
+	FIRST_AID_TREAT				(3, 10),
+	BREAKTHROUGH				(4, 10),
+	//Medic T2
+	HEALING_MEAL				(5, 10),
+	RECYCLING					(6, 10),
+	HIGH_POWER					(7, 10),
+	RADIATION					(8, 10),
+	STRONG_HEALPOWER			(9, 10),
+	DIET						(10, 10),
+	//Medic T3
+	STRONG_NEXUS				(11, 10, 3),
+	TARGET_SET					(12, 10, 3),
+	//Savior T3
+	RECRUIT						(13, 10, 3),
+	DELAYED_HEALING				(14, 10, 3),
+	APPEASE						(15, 10, 3),
+	ADRENALINE					(16, 10, 3),
+	STIMPACK					(17, 10, 3),
+	MEDICAL_RAY					(18, 10, 3),
+	//Therapist T3
+	OINTMENT					(19, 10, 3),
+	COMPRESS_BANDAGE			(20, 10, 3),
+	ANTIBIOTICS					(21, 10, 3),
+	QUICK_PREPARE				(22, 10, 3),
+	SPLINT						(23, 10, 3),
+	DEFIBRILLATOR				(24, 10, 3),
+	//MedicalOfficer T3
+	MOVE_CMD					(25, 10, 3),
+	STIMPACK_CMD				(26, 10, 3),
+	ENGINEER_CMD				(27, 10, 3),
+	PROMOTE_CMD					(28, 10, 3),
+	EXPLOSION_CMD				(29, 10, 3),
+	CAS_CMD						(30, 10, 3), //CAS = Close Air Support
+	//HealGenerator T4
+	HEALING_AMP					(31, 10, 4),
+	SHIELD_GEN					(32, 10, 4),
+	DURABLE_GEN					(33, 10, 4),
+	//AngelWing T4
+	LIGHT_LIKE_FEATHER			(34, 10, 4),
+	ANGELS_BLESS				(35, 10, 4),
+	HEALING_WING				(36, 10, 4),
+	//GammaRayEmmit T4
+	TRANSMOG_BIAS				(37, 10, 4),
+	IMPRINTING_EFFECT			(38, 10, 4),
+	SHEEP_TRANSMOG				(39, 10, 4),
 
 	//universal T4
 	HEROIC_ENERGY				(43, 0, 4), //See icon() and title() for special logic for this one
@@ -1129,6 +1191,14 @@ public enum Talent {
 
 	}
 
+	public static class FirstAidTreatCooldown extends FlavourBuff{
+		public int icon() { return BuffIndicator.TIME; }
+		public void tintIcon(Image icon) { icon.hardlight(0.2f, 1f, 0.2f); }
+		public float iconFadePercent() { return Math.max(0, visualcooldown() / (50)); }
+		public String toString() { return Messages.get(this, "name"); }
+		public String desc() { return Messages.get(this, "desc", dispTurns(visualcooldown())); }
+	};
+
 	int icon;
 	int maxPoints;
 
@@ -1176,6 +1246,9 @@ public enum Talent {
 					break;
 				case KNIGHT:
 					y = 9;
+					break;
+				case MEDIC:
+					y = 10;
 					break;
 			}
 			if (Ratmogrify.useRatroicEnergy){
@@ -1336,7 +1409,7 @@ public enum Talent {
 
 
 		//gunner
-		if (talent == GUNNERS_INTUITION && hero.belongings.weapon instanceof Gun){
+		if ((talent == GUNNERS_INTUITION && hero.belongings.weapon instanceof Gun) && !ShardOfOblivion.passiveIDDisabled()){
 			hero.belongings.weapon.identify();
 		}
 
@@ -1371,9 +1444,9 @@ public enum Talent {
 			}
 		}
 
-		//knight
-		if (talent == CALL_OF_MASTER && hero.buff(HorseRiding.RidingCooldown.class) != null) {
-			hero.buff(HorseRiding.RidingCooldown.class).updateCooldown();
+		//medic
+		if (talent == DOCTORS_INTUITION) {
+			identifyPotions(1+2*hero.pointsInTalent(talent));
 		}
 	}
 
@@ -1474,7 +1547,16 @@ public enum Talent {
 			Buff.affect(hero, ArmorEmpower.class).set(3, 1+hero.pointsInTalent(Talent.TOUGH_MEAL));
 		}
 		if (hero.hasTalent(Talent.IMPREGNABLE_MEAL)) {
-			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.IMPREGNABLE_MEAL), 15f);
+			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.IMPREGNABLE_MEAL), 3);
+		}
+		if (hero.hasTalent(Talent.HEALING_MEAL)) { // 식사 시 디버프 제거 / 디버프가 없을 경우 3의 체력을 회복
+			if (hero.isHeroDebuffed()) {
+				PotionOfCleansing.cleanse(hero);
+			} else {
+				if (hero.pointsInTalent(Talent.HEALING_MEAL) > 1) {
+					hero.heal(3);
+				}
+			}
 		}
 	}
 
@@ -1505,6 +1587,25 @@ public enum Talent {
 			factor *= 1f + hero.pointsInTalent(THIEFS_INTUITION);
 		}
 		return factor;
+	}
+
+	public static void onPotionUsed( Hero hero, int cell, float factor, Potion potion ){
+		onPotionUsed(hero, cell, factor);
+
+		if (hero.hasTalent(Talent.RECYCLING) && !(potion instanceof PotionOfStrength || potion instanceof ExoticPotion || potion instanceof Elixir)) {
+			Class<?extends Pill> potionClass = Potion.PotionToPill.pills.get(potion.getClass());
+			Pill pill = Reflection.newInstance(potionClass);
+			if (pill != null) {
+				int amount = Random.IntRange(hero.pointsInTalent(Talent.RECYCLING)-1, hero.pointsInTalent(Talent.RECYCLING)); // +1: 0-1, +2: 1-2
+				pill.quantity(amount);
+				if (pill.doPickUp( Dungeon.hero )) {
+					GLog.i( Messages.get(Dungeon.hero, "you_now_have", pill.name() ));
+					hero.spend(-1);
+				} else {
+					Dungeon.level.drop( pill, Dungeon.hero.pos ).sprite.drop();
+				}
+			}
+		}
 	}
 
 	public static void onPotionUsed( Hero hero, int cell, float factor ){
@@ -1598,8 +1699,8 @@ public enum Talent {
 			Buff.affect(hero, Sheath.CertainCrit.class).set((int)(factor * hero.pointsInTalent(Talent.INSCRIBED_LETHALITY)));
 		}
 		if (hero.hasTalent(Talent.SMITHING_SPELL)) {
-			Buff.affect(hero, WeaponEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), 10f*factor);
-			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), 10f*factor);
+			Buff.affect(hero, WeaponEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), Math.round(10*factor));
+			Buff.affect(hero, ArmorEnhance.class).set(hero.pointsInTalent(Talent.SMITHING_SPELL), Math.round(10*factor));
 		}
 	}
 
@@ -1753,7 +1854,15 @@ public enum Talent {
 			Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
 		}
 
+		if (hero.hasTalent(Talent.SKILLED_HAND) && hero.heroClass != HeroClass.DUELIST) {
+			dmg += Random.NormalIntRange(0, 1+hero.pointsInTalent(Talent.SKILLED_HAND));
+		}
+
 		if (hero.hasTalent(Talent.NATURE_FRIENDLY) && (level.map[hero.pos] == Terrain.HIGH_GRASS || level.map[hero.pos] == Terrain.FURROWED_GRASS)) {
+			dmg += Random.Int(1, hero.pointsInTalent(Talent.NATURE_FRIENDLY));
+		}
+
+		if (hero.hasTalent(Talent.NATURE_FRIENDLY) && (level.map[hero.pos] == Terrain.GRASS) && hero.heroClass != HeroClass.ADVENTURER) {
 			dmg += Random.Int(1, hero.pointsInTalent(Talent.NATURE_FRIENDLY));
 		}
 
@@ -1768,7 +1877,7 @@ public enum Talent {
 		//attacking procs
 		if (hero.hasTalent(SPEEDY_MOVE) && enemy instanceof Mob && enemy.buff(SpeedyMoveTracker.class) == null){
 			Buff.affect(enemy, SpeedyMoveTracker.class);
-			Buff.prolong(hero, Haste.class, 1f + hero.pointsInTalent(SPEEDY_MOVE));
+			Buff.affect(hero, GreaterHaste.class).set(1 + hero.pointsInTalent(SPEEDY_MOVE));
 		}
 
 		if (enemy instanceof Mob && ((Mob) enemy).surprisedBy(hero)) {
@@ -1801,13 +1910,9 @@ public enum Talent {
 			}
 		}
 
-		if (hero.hasTalent(Talent.KINETIC_BATTLE)) {
-			Buff.affect(hero, Talent.KineticBattle.class).set();
-		}
-
 		if (hero.hasTalent(Talent.WAR_CRY) && enemy.buff(WarCryTracker.class) == null) {
 			Buff.affect(enemy, WarCryTracker.class);
-			Buff.prolong(hero, Adrenaline.class, 1+hero.pointsInTalent(Talent.WAR_CRY));
+			Buff.prolong(hero, Adrenaline.class, hero.pointsInTalent(Talent.WAR_CRY));
 		}
 
 		if (hero.hasTalent(Talent.BLOOMING_WEAPON)
@@ -1847,7 +1952,51 @@ public enum Talent {
 			}
 
 		}
+
+		if (hero.hasTalent(Talent.SCAR_ATTACK)) {
+			int debuffs = enemy.buffs().size();
+			if (debuffs > 0) {
+				dmg += debuffs * Random.NormalIntRange(1, hero.pointsInTalent(Talent.SCAR_ATTACK));
+			}
+		}
+
+		if (hero.hasTalent(Talent.FINISH_ATTACK) && enemy.HP <= enemy.HT*0.25f) {
+			dmg += 1+hero.pointsInTalent(Talent.FINISH_ATTACK);
+			Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG);
+		}
+
+		if (hero.hasTalent(Talent.STRONG_NEXUS)) {
+			for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+				if (mob.alignment == Char.Alignment.ALLY && level.heroFOV[mob.pos]) { // 아군이 영웅의 시야 내에 있을 때
+					int healAmt = 3 * hero.pointsInTalent(Talent.STRONG_NEXUS) - Dungeon.level.distance(hero.pos, mob.pos) + 1;
+					if (healAmt > 0) {
+						mob.heal(healAmt);
+					}
+				}
+			} //heals nearby enemies and herself per every attack
+		}
+
+		if (hero.hasTalent(Talent.TARGET_SET) && hero.belongings.attackingWeapon() instanceof MissileWeapon) {
+			int duration = hero.pointsInTalent(Talent.TARGET_SET);
+			if (enemy.alignment != Char.Alignment.ENEMY) duration *= 5;
+			Buff.prolong(enemy, StoneOfAggression.Aggression.class, duration);
+		}
+
+		if (hero.hasTalent(Talent.RADIATION) && hero.heroClass != HeroClass.MEDIC && enemy.buff(RadioactiveMutation.class) == null) {
+			if (Random.Float() < 0.03f) {
+				Buff.affect(enemy, RadioactiveMutation.class).set(6-hero.pointsInTalent(Talent.RADIATION));
+			}
+		}
 		return dmg;
+	}
+
+	public static int onDefenseProc(Hero hero, Char enemy, int damage) {
+		if (hero.hasTalent(Talent.FIRST_AID_TREAT) && hero.buff(FirstAidTreatCooldown.class) == null && damage > (11-3*hero.pointsInTalent(Talent.FIRST_AID_TREAT))) {
+			hero.heal(3);
+			Buff.affect(hero, FirstAidTreatCooldown.class, 50f);
+		}
+
+		return damage;
 	}
 
 	public static void onLevelUp() {
@@ -2018,6 +2167,9 @@ public enum Talent {
 			case KNIGHT:
 				Collections.addAll(tierTalents, TOUGH_MEAL, KNIGHTS_INTUITION, KINETIC_BATTLE, HARD_SHIELD, WAR_CRY	);
 				break;
+			case MEDIC:
+				Collections.addAll(tierTalents, SCAR_ATTACK, DOCTORS_INTUITION, FINISH_ATTACK, FIRST_AID_TREAT, BREAKTHROUGH);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -2056,6 +2208,9 @@ public enum Talent {
 			case KNIGHT:
 				Collections.addAll(tierTalents, IMPREGNABLE_MEAL, SMITHING_SPELL, ARMOR_ADAPTION, CHIVALRY, PROTECTION, FLAG_OF_CONQUEST);
 				break;
+			case MEDIC:
+				Collections.addAll(tierTalents, HEALING_MEAL, RECYCLING, HIGH_POWER, RADIATION, STRONG_HEALPOWER, DIET);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -2093,6 +2248,9 @@ public enum Talent {
 				break;
 			case KNIGHT:
 				Collections.addAll(tierTalents, CRAFTMANS_SKILLS, TACKLE);
+				break;
+			case MEDIC:
+				Collections.addAll(tierTalents, STRONG_NEXUS, TARGET_SET);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -2199,10 +2357,19 @@ public enum Talent {
 				Collections.addAll(tierTalents, ARMY_OF_DEATH, DEATHS_CHILL, OVERCOME, RESENTMENT, UNDEAD, DEATHS_FEAR );
 				break;
 			case HORSEMAN:
-				Collections.addAll(tierTalents, SHOCKWAVE, CALL_OF_MASTER, DASH_ENHANCE, BUFFER, PARKOUR, PILOTING);
+				Collections.addAll(tierTalents, SHOCKWAVE, ARMORED_HORSE, DASH_ENHANCE, BUFFER, PARKOUR, PILOTING);
 				break;
 			case CRUSADER:
 				Collections.addAll(tierTalents, HOLY_SHIELD, PRAY_FOR_DEAD, JUDGEMENT, CLEANSING_PRAY, PUNISHMENT, ANTI_DEMON);
+				break;
+			case SAVIOR:
+				Collections.addAll(tierTalents, RECRUIT, DELAYED_HEALING, APPEASE, ADRENALINE, STIMPACK, MEDICAL_RAY);
+				break;
+			case THERAPIST:
+				Collections.addAll(tierTalents, OINTMENT, COMPRESS_BANDAGE, ANTIBIOTICS, QUICK_PREPARE, SPLINT, DEFIBRILLATOR);
+				break;
+			case MEDICALOFFICER:
+				Collections.addAll(tierTalents, MOVE_CMD, STIMPACK_CMD, ENGINEER_CMD, PROMOTE_CMD, EXPLOSION_CMD, CAS_CMD);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -2323,6 +2490,60 @@ public enum Talent {
 				}
 			}
 		}
+	}
+
+	private static void identifyPotions(int amount) {
+		//this is from ScrollOfDivination
+		HashSet<Class<? extends Potion>> potions = Potion.getUnknown();
+
+		ArrayList<Item> IDed = new ArrayList<>();
+		int left = amount;
+
+		while (left > 0) {
+			if (potions.isEmpty()) {
+				break;
+			}
+			Potion p = Reflection.newInstance(Random.element(potions));
+			p.identify();
+			IDed.add(p);
+			potions.remove(p.getClass());
+			left --;
+		}
+
+		if (left == 0) {
+			GameScene.show(new WndIdentify(IDed, Talent.DOCTORS_INTUITION));
+		}
+	}
+
+	private static class WndIdentify extends Window {
+
+		private static final int WIDTH = 120;
+
+		WndIdentify(ArrayList<Item> IDed, Talent talent ){
+			IconTitle cur = new IconTitle(new TalentIcon(talent),
+					Messages.titleCase(Messages.get(this, "name")));
+			cur.setRect(0, 0, WIDTH, 0);
+			add(cur);
+
+			RenderedTextBlock msg = PixelScene.renderTextBlock(Messages.get(this, "desc"), 6);
+			msg.maxWidth(120);
+			msg.setPos(0, cur.bottom() + 2);
+			add(msg);
+
+			float pos = msg.bottom() + 10;
+
+			for (Item i : IDed){
+
+				cur = new IconTitle(i);
+				cur.setRect(0, pos, WIDTH, 0);
+				add(cur);
+				pos = cur.bottom() + 2;
+
+			}
+
+			resize(WIDTH, (int)pos);
+		}
+
 	}
 
 }

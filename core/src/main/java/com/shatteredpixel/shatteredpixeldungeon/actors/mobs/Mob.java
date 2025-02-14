@@ -38,8 +38,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Command;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Dread;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FirstAidBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HorseRiding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GreaterHaste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
@@ -51,6 +53,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Sleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulCollect;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SoulMark;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StimPack;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.chargearea.ArtifactRechargeArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.chargearea.BarrierRechargeArea;
@@ -74,12 +77,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Saddle;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.ExoticPotion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.spellbook.BookOfTransfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.PinkGem;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.bow.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ExoticCrystals;
@@ -649,11 +654,13 @@ public abstract class Mob extends Char {
 	public float attackDelay() {
 		float delay = 1f;
 		if ( buff(Adrenaline.class) != null) delay /= 1.5f;
+
 		return delay;
 	}
 	
 	protected boolean doAttack( Char enemy ) {
-		
+		sprite.attackAcceleration( buff(StimPack.class) != null ? 1.5f : 1f );
+
 		if (sprite != null && (sprite.visible || enemy.sprite.visible)) {
 			sprite.attack( enemy.pos );
 			return false;
@@ -901,7 +908,11 @@ public abstract class Mob extends Char {
 			}
 		}
 
-		if (cause == hero) {
+		if (hero.buff(FirstAidBuff.FirstAidBuffCooldown.class) != null) {
+			hero.buff(FirstAidBuff.FirstAidBuffCooldown.class).kill();
+		}
+
+		if ((this.alignment != Alignment.ALLY) && (cause == hero || cause instanceof Wand || cause instanceof DirectableAlly)) {
 			if (Dungeon.hero.hasTalent(Talent.LETHAL_RAGE)){
 				Berserk berserk = Buff.affect(hero, Berserk.class);
 				berserk.add(0.067f*Dungeon.hero.pointsInTalent(Talent.LETHAL_RAGE));
@@ -912,18 +923,30 @@ public abstract class Mob extends Char {
 			}
 
 			if (hero.hasTalent(Talent.ADRENALINE_SURGE)) {
-				Buff.prolong(hero, Adrenaline.class, 1+hero.pointsInTalent(Talent.ADRENALINE_SURGE));
+				Buff.prolong(hero, Adrenaline.class, 1+2*hero.pointsInTalent(Talent.ADRENALINE_SURGE));
 			}
 
 			if (hero.hasTalent(Talent.PRAY_FOR_DEAD)) {
 				Buff.affect(hero, Talent.PrayForDeadTracker.class, Talent.PrayForDeadTracker.DURATION);
 			}
 
-			if (hero.buff(HorseRiding.RidingCooldown.class) != null && (Dungeon.hero.lvl <= maxLvl + 2 || Dungeon.hero.buff(AscensionChallenge.class) != null)) {
+			if (hero.buff(HorseRiding.RidingCooldown.class) != null) {
 				hero.buff(HorseRiding.RidingCooldown.class).kill();
 			}
 
+			if (hero.hasTalent(Talent.KINETIC_BATTLE)) {
+				Buff.affect(hero, Talent.KineticBattle.class).set();
+			}
+
+			if (hero.subClass == HeroSubClass.MEDICALOFFICER) {
+				Buff.affect(hero, Command.class).kill();
+			}
+
 			Saddle.kill(this);
+		}
+
+		if (cause instanceof Command.CASBomb && hero.subClass == HeroSubClass.MEDICALOFFICER) { //직접적인 데미지를 입히는 군의관의 영웅 능력으로 적을 처치해도 명령권을 얻으며, 이 경우 최대치를 넘을 수 있음
+			Buff.affect(hero, Command.class).kill(true);
 		}
 
 		if (Dungeon.hero.isAlive() && !Dungeon.level.heroFOV[pos]) {

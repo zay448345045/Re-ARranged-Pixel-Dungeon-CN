@@ -250,25 +250,25 @@ public class MobSpawner extends Actor {
 							Soldier.class, Soldier.class, Soldier.class,
 							Researcher.class));
 				case 27:
-					// 2x Soldier, 2x researcher, 1x supression
+					// 2x Soldier, 2x researcher, 1x suppression
 					return new ArrayList<>(Arrays.asList(
 							Soldier.class, Soldier.class,
 							Researcher.class, Researcher.class,
-							Supression.class));
+							Suppression.class));
 				case 28:
-					// 2x soldier, 1x researcher, 1x supression, 1x tank, 1x medic
+					// 2x soldier, 1x researcher, 1x suppression, 1x tank, 1x medic
 					return new ArrayList<>(Arrays.asList(
 							Soldier.class, Soldier.class,
 							Researcher.class,
-							Supression.class,
+							Suppression.class,
 							Tank.class,
 							Medic.class));
 				case 29: case 30: case 31:
-					// 1x soldier, 2x researcher, 2x supression, 1x tank, 2x medic
+					// 1x soldier, 2x researcher, 2x suppression, 1x tank, 2x medic
 					return new ArrayList<>(Arrays.asList(
 							Soldier.class,
 							Researcher.class, Researcher.class,
-							Supression.class, Supression.class,
+							Suppression.class, Suppression.class,
 							Tank.class,
 							Medic.class, Medic.class));
 			}

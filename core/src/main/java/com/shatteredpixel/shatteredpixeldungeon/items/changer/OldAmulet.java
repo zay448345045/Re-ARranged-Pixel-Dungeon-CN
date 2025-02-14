@@ -91,12 +91,9 @@ public class OldAmulet extends Item {
 
     @Override
     public boolean doPickUp(Hero hero, int pos) {
-        if (Dungeon.depth == 20 && Dungeon.branch == 2 && hero.buff(TempleCurse.class) == null) {
+        if (Dungeon.depth == 14 && Dungeon.branch == 2 && hero.buff(TempleCurse.class) == null) {
             Dungeon.templeCompleted = true;
             Buff.affect(hero, TempleCurse.class);
-            PixelScene.shake(1, 0.7f);
-            Sample.INSTANCE.play(Assets.Sounds.ROCKS, 0.7f, 0.5f);
-            GLog.n(Messages.get(this, "shake"));
         }
         return super.doPickUp(hero, pos);
     }
@@ -153,6 +150,8 @@ public class OldAmulet extends Item {
     public static Item changeItem( Item item ){
         if (item instanceof SpiritBow) {
             return changeBow((SpiritBow)item);
+        } else if (item instanceof Gun) {
+            return changeGun((Gun)item);
         } else if (item instanceof Shovel) {
             return changeShovel((Shovel)item);
         } else if (item instanceof Machete) {
@@ -204,6 +203,11 @@ public class OldAmulet extends Item {
         newBow.enchantHardened = bow.enchantHardened;
 
         return newBow;
+    }
+
+    private static Gun changeGun(Gun gun) {
+        gun.inscribeMod = Gun.InscribeMod.INSCRIBED;
+        return gun;
     }
 
     private static Spade changeShovel(Shovel shovel) {
@@ -505,47 +509,8 @@ public class OldAmulet extends Item {
     }
 
     public static class TempleCurse extends Buff {
-        @Override
-        public int icon() {
-            return BuffIndicator.AMULET;
-        }
-
-        @Override
-        public void tintIcon(Image icon) {
-            icon.hardlight(0xC68749);
-        }
-
-        public static void beckonEnemies(){
-            if (Dungeon.hero.buff(TempleCurse.class) != null) {
-                for (Mob m : Dungeon.level.mobs){
-                    if (m.alignment == Char.Alignment.ENEMY) {
-                        m.beckon(Dungeon.hero.pos);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public boolean act() {
-            beckonEnemies();
-
-            spend(TICK);
-            return true;
-        }
-
         public void saySwitch(){
-            if (Dungeon.branch == 2) {
-                GLog.n(Messages.get(this, "beckon"));
-            } else {
-                GLog.i(Messages.get(this, "escape"));
-            }
-        }
-
-        public void onLevelSwitch() {
-            if (Dungeon.branch == 2) {
-                PixelScene.shake(1, 0.7f);
-                Sample.INSTANCE.play(Assets.Sounds.ROCKS, 0.7f, 0.5f);
-            }
+            GLog.i(Messages.get(this, "escape"));
         }
     }
 }

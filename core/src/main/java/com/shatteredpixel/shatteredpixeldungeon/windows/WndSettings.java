@@ -32,6 +32,8 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.CheckBox;
 import com.shatteredpixel.shatteredpixeldungeon.ui.GameLog;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
@@ -68,6 +70,7 @@ public class WndSettings extends WndTabbed {
 	private DataTab     data;
 	private AudioTab    audio;
 	private LangsTab    langs;
+	private SeedfinderTab    seeds;
 
 	public static int last_index = 0;
 
@@ -186,11 +189,25 @@ public class WndSettings extends WndTabbed {
 		};
 		add( langsTab );
 
+		seeds = new SeedfinderTab();
+		seeds.setSize(width, 0);
+		height = Math.max(height, audio.height());
+		add( seeds );
+
+		add( new IconTab(Icons.get(Icons.SEED_POUCH)){
+			@Override
+			protected void select(boolean value) {
+				super.select(value);
+				seeds.visible = seeds.active = value;
+				if (value) last_index = 6;
+			}
+		});
+
 		resize(width, (int)Math.ceil(height));
 
 		layoutTabs();
 
-		if (tabs.size() == 5 && last_index >= 3){
+		if (tabs.size() == 6 && last_index >= 3){
 			//input tab isn't visible
 			select(last_index-1);
 		} else {
@@ -1233,6 +1250,7 @@ public class WndSettings extends WndTabbed {
 				optSFX.setRect(optMusic.right()+2, sep2.y + 1 + GAP, width/2-1, SLIDER_HEIGHT);
 				chkMuteSFX.setRect(chkMusicMute.right()+2, optSFX.bottom() + GAP, width/2-1, BTN_HEIGHT);
 
+				chkOldMusic.setRect(0, chkMuteSFX.bottom() + GAP, width, BTN_HEIGHT);
 			} else {
 				optMusic.setRect(0, sep1.y + 1 + GAP, width, SLIDER_HEIGHT);
 				chkMusicMute.setRect(0, optMusic.bottom() + GAP, width, BTN_HEIGHT);
@@ -1242,6 +1260,8 @@ public class WndSettings extends WndTabbed {
 
 				optSFX.setRect(0, sep2.y + 1 + GAP, width, SLIDER_HEIGHT);
 				chkMuteSFX.setRect(0, optSFX.bottom() + GAP, width, BTN_HEIGHT);
+
+				chkOldMusic.setRect(0, chkMuteSFX.bottom() + GAP, width, BTN_HEIGHT);
 			}
 
 			height = chkMuteSFX.bottom();
@@ -1253,7 +1273,7 @@ public class WndSettings extends WndTabbed {
 				chkIgnoreSilent.setRect(0, sep3.y + 1 + GAP, width, BTN_HEIGHT);
 
 				chkOldMusic.setRect(0, chkIgnoreSilent.bottom() + GAP, width, BTN_HEIGHT);
-				height = chkOldMusic.bottom();
+				height = chkIgnoreSilent.bottom();
 			} else if (chkMusicBG != null){
 				sep3.size(width, 1);
 				sep3.y = chkMuteSFX.bottom() + GAP;
@@ -1496,5 +1516,140 @@ public class WndSettings extends WndTabbed {
 			}
 
 		}
+	}
+
+	private static class SeedfinderTab extends Component {
+		RenderedTextBlock title;
+		ColorBlock sep1;
+		OptionSlider numFloors;
+		RedButton btnChallenges;
+		RedButton btnMode;
+		CheckBox PlusSearch;
+
+		@Override
+		protected void createChildren() {
+			title = PixelScene.renderTextBlock(Messages.get(this, "title"), 9);
+			title.hardlight(TITLE_COLOR);
+			add(title);
+
+			boolean isDesktop = DeviceCompat.isDesktop();
+
+			numFloors = new OptionSlider(Messages.get(this, "floors_slider") + " (" + SPDSettings.seedfinderFloors() + ")",
+					"1", "30", 1,  30) {
+				@Override
+				protected void onChange() {
+					SPDSettings.seedfinderFloors(getSelectedValue());
+
+					// reload scene for floor number desc
+					ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
+						@Override
+						public void beforeCreate() {
+						}
+
+						@Override
+						public void afterCreate() {
+							//do nothing
+						}
+					});
+				}
+			};
+			numFloors.setSelectedValue(SPDSettings.seedfinderFloors());
+			add(numFloors);
+
+			sep1 = new ColorBlock(1, 1, 0xFF000000);
+			add(sep1);
+
+			btnChallenges = new RedButton(Messages.get(WndSettings.SeedfinderTab.this, "challenges")){
+				@Override
+				protected void onClick() {
+					ShatteredPixelDungeon.scene().addToFront(new WndChallenges(SPDSettings.challenges(), true) {
+						public void onBackPressed() {
+							super.onBackPressed();
+
+							// reload scene for new button color
+							ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
+								@Override
+								public void beforeCreate() {
+								}
+
+								@Override
+								public void afterCreate() {
+									//do nothing
+								}
+							});
+						}
+					});
+				}
+			};
+			btnChallenges.textColor(SPDSettings.challenges() == 0 ? WHITE : TITLE_COLOR);
+			add(btnChallenges);
+
+			String modeBtnDescKey = SPDSettings.seedfinderConditionANY() ? "mode_any" : "mode_all";
+			btnMode = new RedButton(Messages.get(WndSettings.SeedfinderTab.this, modeBtnDescKey)){
+				@Override
+				protected void onClick() {
+					SPDSettings.seedfinderConditionANY(!SPDSettings.seedfinderConditionANY());
+
+					// reload scene for new button text
+					ShatteredPixelDungeon.seamlessResetScene(new Game.SceneChangeCallback() {
+						@Override
+						public void beforeCreate() {
+						}
+
+						@Override
+						public void afterCreate() {
+							//do nothing
+						}
+					});
+				}
+			};
+			add(btnMode);
+
+			PlusSearch = new CheckBox( Messages.get(this, "plus_search") ) {
+				@Override
+				protected void onClick() {
+					super.onClick();
+					if (checked()) {
+						checked(!checked());
+						ShatteredPixelDungeon.scene().add(new WndOptions(new Image(new ItemSprite(ItemSpriteSheet.SEED_FIREBLOOM)),
+								Messages.get(SeedfinderTab.class, "plus"),
+								Messages.get(SeedfinderTab.class, "plus_desc"),
+								Messages.get(DisplayTab.class, "okay"),
+								Messages.get(DisplayTab.class, "cancel")) {
+							@Override
+							protected void onSelect(int index) {
+								if (index == 0) {
+									checked(!checked());
+									SPDSettings.PlusSearch(checked());
+								}
+							}
+						});
+					} else {
+						SPDSettings.PlusSearch(checked());
+					}
+				}
+			};
+			PlusSearch.checked(SPDSettings.PlusSearch());
+			add(PlusSearch);
+		}
+
+		@Override
+		protected void layout() {
+
+			float bottom = y;
+
+			title.setPos((width - title.width())/2, bottom + GAP);
+			sep1.size(width, 1);
+			sep1.y = title.bottom() + 3*GAP;
+
+			bottom = sep1.y + 1;
+
+			numFloors.setRect(0, bottom + GAP, width, SLIDER_HEIGHT);
+
+			btnChallenges.setRect(0, numFloors.bottom() + GAP, width / 2 - 1, BTN_HEIGHT);
+			btnMode.setRect(width/2 + 1, numFloors.bottom() + GAP, width / 2, BTN_HEIGHT);
+			PlusSearch.setRect(0, btnChallenges.bottom() + GAP, width, BTN_HEIGHT);
+		}
+
 	}
 }

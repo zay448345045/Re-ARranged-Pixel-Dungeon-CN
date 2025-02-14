@@ -212,6 +212,10 @@ public class TitleScene extends PixelScene {
         add(btnLocalization);
         btnLocalization.setRect(0, h - BTN_HEIGHT, 50, BTN_HEIGHT);
 
+		StyledButton btnSeedFinder = new SeedFinderButton(GREY_TR, "查种系统");
+		add(btnSeedFinder);
+		btnSeedFinder.setRect(0, 0, 60, BTN_HEIGHT);
+
 		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
 		version.measure();
 		version.hardlight( 0x888888 );
@@ -377,6 +381,18 @@ public class TitleScene extends PixelScene {
 		@Override
 		protected void onClick() {
 			ShatteredPixelDungeon.switchNoFade(SupporterScene.class);
+		}
+	}
+
+	private static class SeedFinderButton extends StyledButton {
+		public SeedFinderButton(Chrome.Type type, String label) {
+			super(type, label);
+			icon(Icons.get(Icons.SEED));
+		}
+
+		@Override
+		protected void onClick() {
+			ShatteredPixelDungeon.switchNoFade(SeedFinderScene.class);
 		}
 	}
 

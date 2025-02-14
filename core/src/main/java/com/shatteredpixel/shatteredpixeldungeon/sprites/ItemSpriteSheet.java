@@ -188,8 +188,8 @@ public class ItemSpriteSheet {
 	public static final int FIRE_BOMB       = BOMBS+2;
 	public static final int FROST_BOMB      = BOMBS+3;
 	public static final int REGROWTH_BOMB   = BOMBS+4;
-	public static final int FLASHBANG       = BOMBS+5;
-	public static final int SHOCK_BOMB      = BOMBS+6;
+	public static final int SMOKE_BOMB      = BOMBS+5;
+	public static final int FLASHBANG       = BOMBS+6;
 	public static final int HOLY_BOMB       = BOMBS+7;
 	public static final int WOOLY_BOMB      = BOMBS+8;
 	public static final int NOISEMAKER      = BOMBS+9;
@@ -202,8 +202,8 @@ public class ItemSpriteSheet {
 		assignItemRect(FIRE_BOMB,       13, 12);
 		assignItemRect(FROST_BOMB,      13, 12);
 		assignItemRect(REGROWTH_BOMB,   13, 12);
-		assignItemRect(FLASHBANG,       13, 12);
-		assignItemRect(SHOCK_BOMB,      10, 13);
+		assignItemRect(SMOKE_BOMB,      13, 12);
+		assignItemRect(FLASHBANG,       10, 13);
 		assignItemRect(HOLY_BOMB,       10, 13);
 		assignItemRect(WOOLY_BOMB,      10, 13);
 		assignItemRect(NOISEMAKER,      10, 13);
@@ -556,7 +556,7 @@ public class ItemSpriteSheet {
 	public static final int STONE_BLINK         = STONES+4;
 	public static final int STONE_CLAIRVOYANCE  = STONES+5;
 	public static final int STONE_SLEEP         = STONES+6;
-	public static final int STONE_DISARM        = STONES+7;
+	public static final int STONE_DETECT        = STONES+7;
 	public static final int STONE_ENCHANT       = STONES+8;
 	public static final int STONE_FLOCK         = STONES+9;
 	public static final int STONE_INTUITION     = STONES+10;
@@ -837,13 +837,13 @@ public class ItemSpriteSheet {
 	public static final int ARMOR_SAMURAI	= NEW_ARMOR+1;
 	public static final int ARMOR_PLANTER	= NEW_ARMOR+2;
 	public static final int ARMOR_KNIGHT	= NEW_ARMOR+3;
-	public static final int ARMOR_NURSE		= NEW_ARMOR+4;
+	public static final int ARMOR_MEDIC 	= NEW_ARMOR+4;
 	static{
 		assignItemRect(ARMOR_GUNNER	, 15, 13);
 		assignItemRect(ARMOR_SAMURAI, 12, 16);
 		assignItemRect(ARMOR_PLANTER, 15, 12);
 		assignItemRect(ARMOR_KNIGHT	, 14, 12);
-		assignItemRect(ARMOR_NURSE	, 14, 12);
+		assignItemRect(ARMOR_MEDIC	, 14, 12);
 	}
 
 	private static final int NEW_SCROLL 	=			xy(1, 37);  //16 slots
@@ -1468,6 +1468,16 @@ public class ItemSpriteSheet {
 	static {
 		for (int i = PILL; i < PILL+12; i++)
 			assignItemRect(i, 11, 11);
+	}
+
+	private static final int MEDIC			=			xy(1, 71);  //16 slots
+	public static final int SCALPEL			= MEDIC+0;
+	public static final int GAMMA_RAY_GUN	= MEDIC+1;
+	public static final int FIRST_AID_KIT	= MEDIC+2;
+	static{
+		assignItemRect(SCALPEL			, 13, 13);
+		assignItemRect(GAMMA_RAY_GUN	, 12, 15);
+		assignItemRect(FIRST_AID_KIT	, 16, 13);
 	}
 
 	// ****** new sprites end ******

@@ -141,6 +141,18 @@ public class Assets {
 		public static final String WINDOWS  = "messages/windows/windows";
 	}
 
+	/*public static class NewMessages {
+		public static final String ACTORS   = "new_messages/actors/actors";
+		public static final String ITEMS    = "new_messages/items/items";
+		public static final String JOURNAL  = "new_messages/journal/journal";
+		public static final String LEVELS   = "new_messages/levels/levels";
+		public static final String MISC     = "new_messages/misc/misc";
+		public static final String PLANTS   = "new_messages/plants/plants";
+		public static final String SCENES   = "new_messages/scenes/scenes";
+		public static final String UI       = "new_messages/ui/ui";
+		public static final String WINDOWS  = "new_messages/windows/windows"
+	}*/
+
 	public static class Music {
 		public static final String THEME_1              = "music/theme_1.ogg";
 		public static final String THEME_2              = "music/theme_2.ogg";
@@ -281,7 +293,7 @@ public class Assets {
 		public static final String SAMURAI  = "splashes/samurai.jpg";
 		public static final String ADVENTURER	= "splashes/adventurer.jpg";
 		public static final String KNIGHT	= "splashes/knight.jpg";
-		public static final String NURSE	= "splashes/nurse.jpg";
+		public static final String MEDIC	= "splashes/medic.jpg";
 
 		public static final String SEWERS   = "splashes/sewers.jpg";
 		public static final String PRISON   = "splashes/prison.jpg";
@@ -303,7 +315,7 @@ public class Assets {
 		public static final String SAMURAI	= "sprites/samurai.png";
 		public static final String ADVENTURER	= "sprites/adventurer.png";
 		public static final String KNIGHT	= "sprites/knight.png";
-		public static final String NURSE	= "sprites/nurse.png";
+		public static final String MEDIC	= "sprites/medic.png";
 		public static final String AVATARS  = "sprites/avatars.png";
 		public static final String PET      = "sprites/pet.png";
 		public static final String AMULET   = "sprites/amulet.png";
@@ -377,8 +389,8 @@ public class Assets {
 		public static final String SOLDIER= "sprites/soldier.png";
 		public static final String RESEARCHER= "sprites/researcher.png";
 		public static final String TANK= "sprites/tank.png";
-		public static final String SUPRESSION= "sprites/supression.png";
-		public static final String MEDIC= "sprites/medic.png";
+		public static final String SUPPRESSION = "sprites/suppression.png";
+		public static final String MEDIC_ENEMY= "sprites/medic_enemy.png";
 		public static final String REBEL= "sprites/rebel.png";
 		public static final String BARRICADE= "sprites/barricade.png";
 		public static final String WATCHTOWER= "sprites/watchtower.png";
@@ -386,5 +398,6 @@ public class Assets {
 		public static final String MACHINEGUN= "sprites/machinegun.png";
 		public static final String MORTAR = "sprites/mortar.png";
 		public static final String SPIRIT_HORSE = "sprites/spirit_horse.png";
+		public static final String SUPPORT_FORCE = "sprites/support_force.png";
 	}
 }

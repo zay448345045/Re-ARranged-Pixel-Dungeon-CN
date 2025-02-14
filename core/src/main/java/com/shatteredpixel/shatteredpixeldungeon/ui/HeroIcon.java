@@ -88,9 +88,9 @@ public class HeroIcon extends Image {
 	public static final int CRUSADER	= 38;
 //	public static final int 			= 39;
 
-	public static final int MEDIC		= 40;
-	public static final int ANGEL		= 41;
-	public static final int SURGEON		= 42;
+	public static final int SAVIOR		= 40;
+	public static final int THERAPIST	= 41;
+	public static final int MEDICALOFFICER	= 42;
 //	public static final int 			= 43;
 
 //	public static final int 			= 44;
@@ -208,9 +208,9 @@ public class HeroIcon extends Image {
 	public static final int PRAY			= 138;
 //	public static final int 				= 139;
 
-//	public static final int 				= 140;
+	public static final int FIRST_AID		= 140;
 //	public static final int 				= 141;
-//	public static final int 				= 142;
+	public static final int COMMAND			= 142;
 //	public static final int 				= 143;
 
 	public HeroIcon(HeroSubClass subCls){

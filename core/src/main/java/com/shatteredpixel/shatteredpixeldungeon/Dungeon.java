@@ -73,6 +73,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.TempleLastLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.TempleLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.TempleNewLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -86,6 +87,7 @@ import com.watabou.noosa.Game;
 import com.watabou.utils.BArray;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -393,18 +395,19 @@ public class Dungeon {
 					level = new DeadEndLevel();
 			}
 		} else if (branch == 2) {
-			switch (depth) {
-				case 16:
-				case 17:
-				case 18:
-				case 19:
-					level = new TempleLevel();
-					break;
-				case 20:
-					level = new TempleLastLevel();
-					break;
-				default:
-					level = new DeadEndLevel();
+			if (DeviceCompat.isDebug()) {
+				level = new TempleNewLevel();
+			} else {
+				switch (depth) {
+					case 11:
+					case 12:
+					case 13:
+					case 14:
+						level = new TempleNewLevel();
+						break;
+					default:
+						level = new DeadEndLevel();
+				}
 			}
 		} else {
 			level = new DeadEndLevel();
@@ -521,10 +524,6 @@ public class Dungeon {
 
 		if (hero.buff(AscensionChallenge.class) != null){
 			hero.buff(AscensionChallenge.class).onLevelSwitch();
-		}
-
-		if (hero.buff(OldAmulet.TempleCurse.class) != null){
-			hero.buff(OldAmulet.TempleCurse.class).onLevelSwitch();
 		}
 
 		Mob.restoreAllies( level, pos );

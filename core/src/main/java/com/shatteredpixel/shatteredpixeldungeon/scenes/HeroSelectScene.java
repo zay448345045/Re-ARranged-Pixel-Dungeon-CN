@@ -262,7 +262,7 @@ public class HeroSelectScene extends PixelScene {
 //					}
 //					count = 0;
 //				}
-				if (count >= 3){ //버튼 3개마다 줄바꿈
+				if (count >= 5){ //버튼 5개마다 줄바꿈
 					curX -= btnWidth*count + count;
 					curY += btnHeight+1;
 //					if (heroBtns.size()%3 != 0){
@@ -430,6 +430,12 @@ public class HeroSelectScene extends PixelScene {
 			heroDesc.setPos((leftPortion - heroDesc.width())/2f, heroName.bottom() + 5);
 			align(heroDesc);
 
+			while(startBtn.top() < heroDesc.bottom()){
+				heroDesc.maxWidth(heroDesc.maxWidth()+10);
+				heroDesc.setPos(Math.max(0, (leftPortion - heroDesc.width())/2f), heroName.bottom() + 5);
+				align(heroDesc);
+			}
+
 			btnFade.visible = btnFade.active = true;
 
 			startBtn.visible = startBtn.active = true;
@@ -548,8 +554,8 @@ public class HeroSelectScene extends PixelScene {
 
 		private HeroClass cl;
 
-		private static final int MIN_WIDTH = 20;
-		private static final int HEIGHT = 24;
+		private static final int MIN_WIDTH = 12;
+		private static final int HEIGHT = 20;
 
 		HeroBtn ( HeroClass cl ){
 			super(Chrome.Type.GREY_BUTTON_TR, "");
@@ -662,22 +668,24 @@ public class HeroSelectScene extends PixelScene {
 			StyledButton btnSeedTest = new StyledButton(Chrome.Type.BLANK, Messages.get(HeroSelectScene.class, "seed_find"), 6){
 				@Override
 				protected void onClick() {
-					ShatteredPixelDungeon.switchScene( SeedFindScene.class );
+					//ShatteredPixelDungeon.switchScene( SeedFindScene.class );
 				}
 			};
 			btnSeedTest.icon(Icons.get(Icons.MAGNIFY));
-			add(btnSeedTest);
-			buttons.add(btnSeedTest);
+			//TODO: 시드파인더 픽스 시 활성화
+//			add(btnSeedTest);
+//			buttons.add(btnSeedTest);
 
 			StyledButton btnSeedAnalysis = new StyledButton(Chrome.Type.BLANK, Messages.get(HeroSelectScene.class, "seed_analysis"), 6){
 				@Override
 				protected void onClick() {
-					ShatteredPixelDungeon.switchScene( SeedAnalysisScene.class );
+					//ShatteredPixelDungeon.switchScene( SeedAnalysisScene.class );
 				}
 			};
 			btnSeedAnalysis.icon(Icons.get(Icons.NEWS));
-			add(btnSeedAnalysis);
-			buttons.add(btnSeedAnalysis);
+			//TODO: 시드파인더 픽스 시 활성화
+//			add(btnSeedAnalysis);
+//			buttons.add(btnSeedAnalysis);
 
 			StyledButton dailyButton = new StyledButton(Chrome.Type.BLANK, Messages.get(HeroSelectScene.class, "daily"), 6){
 

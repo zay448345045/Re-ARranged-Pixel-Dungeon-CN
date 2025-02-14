@@ -46,6 +46,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.knight.Uns
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.ElementalBlast;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WarpBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WildMagic;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.medic.AngelWing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.medic.GammaRayEmmit;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.medic.HealingGenerator;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.DeathMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.ShadowClone;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.SmokeBomb;
@@ -57,6 +60,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.He
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.BulletBelt;
+import com.shatteredpixel.shatteredpixeldungeon.items.GammaRayGun;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
 import com.shatteredpixel.shatteredpixeldungeon.items.KnightsShield;
@@ -68,6 +72,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MedicKit;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.changer.OldAmulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
@@ -100,6 +105,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Machete;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Saber;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Scalpel;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Shovel;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornKatana;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
@@ -122,8 +128,8 @@ public enum HeroClass {
 	GUNNER( HeroSubClass.OUTLAW, HeroSubClass.GUNSLINGER, HeroSubClass.SPECIALIST ),
 	SAMURAI( HeroSubClass.SLASHER, HeroSubClass.MASTER, HeroSubClass.SLAYER ),
 	ADVENTURER( HeroSubClass.ENGINEER, HeroSubClass.EXPLORER, HeroSubClass.RESEARCHER ),
-	KNIGHT( HeroSubClass.DEATHKNIGHT, HeroSubClass.HORSEMAN, HeroSubClass.CRUSADER);
-//	NURSE( HeroSubClass.MEDIC, HeroSubClass.ANGEL, HeroSubClass.SURGEON );
+	KNIGHT( HeroSubClass.DEATHKNIGHT, HeroSubClass.HORSEMAN, HeroSubClass.CRUSADER),
+	MEDIC( HeroSubClass.SAVIOR, HeroSubClass.THERAPIST, HeroSubClass.MEDICALOFFICER );
 
 	private HeroSubClass[] subClasses;
 
@@ -211,6 +217,10 @@ public enum HeroClass {
 			case KNIGHT:
 				initKnight( hero );
 				break;
+
+			case MEDIC:
+				initMedic( hero );
+				break;
 		}
 
 		if (SPDSettings.quickslotWaterskin()) {
@@ -244,6 +254,8 @@ public enum HeroClass {
 				return Badges.Badge.MASTERY_ADVENTURER;
 			case KNIGHT:
 				return Badges.Badge.MASTERY_KNIGHT;
+			case MEDIC:
+				return Badges.Badge.MASTERY_MEDIC;
 		}
 		return null;
 	}
@@ -385,23 +397,24 @@ public enum HeroClass {
 		new ScrollOfRemoveCurse().identify();
 		new PotionOfParalyticGas().identify();
 	}
-//
-//	private static void initNurse( Hero hero ) {
-//		HealBook healBook = new HealBook();
-//		(hero.belongings.weapon = healBook).identify();
-//		hero.belongings.weapon.activate(hero);
-//
-//		GammaRayGun gammaRayGun = new GammaRayGun();
-//		gammaRayGun.collect();
-//		Dungeon.quickslot.setSlot(0, gammaRayGun);
-//
-//		HandMirror handMirror = new HandMirror();
-//		handMirror.collect();
-//		Dungeon.quickslot.setSlot(1, handMirror);
-//
-//		new ScrollOfMirrorImage().identify();
-//		new PotionOfHealing().identify();
-//	}
+
+	private static void initMedic( Hero hero ) {
+		Scalpel scalpel = new Scalpel();
+		(hero.belongings.weapon = scalpel).identify();
+		hero.belongings.weapon.activate(hero);
+
+		GammaRayGun gammaRayGun = new GammaRayGun();
+		gammaRayGun.collect();
+		Dungeon.quickslot.setSlot(0, gammaRayGun);
+
+		MedicKit kit = new MedicKit();
+		(hero.belongings.artifact = kit).identify();
+		hero.belongings.artifact.activate( hero );
+		Dungeon.quickslot.setSlot(1, kit);
+
+		new ScrollOfMirrorImage().identify();
+		new PotionOfHealing().identify();
+	}
 
 	public String title() {
 		return Messages.get(HeroClass.class, name());
@@ -439,8 +452,8 @@ public enum HeroClass {
 				return new ArmorAbility[]{new Sprout(), new TreasureMap(), new Root()};
 			case KNIGHT:
 				return new ArmorAbility[]{new HolyShield(), new StimPack(), new UnstableAnkh()};
-//			case NURSE:
-//				return new ArmorAbility[]{new HealareaGenerator(), new AngelWing(), new GammaRayEmmit()};
+			case MEDIC:
+				return new ArmorAbility[]{new HealingGenerator(), new AngelWing(), new GammaRayEmmit()};
 		}
 	}
 
@@ -464,8 +477,8 @@ public enum HeroClass {
 				return Assets.Sprites.ADVENTURER;
 			case KNIGHT:
 				return Assets.Sprites.KNIGHT;
-//			case NURSE:
-//				return Assets.Sprites.NURSE;
+			case MEDIC:
+				return Assets.Sprites.MEDIC;
 		}
 	}
 
@@ -489,8 +502,8 @@ public enum HeroClass {
 				return Assets.Splashes.ADVENTURER;
 			case KNIGHT:
 				return Assets.Splashes.KNIGHT;
-//			case NURSE:
-//				return Assets.Splashes.NURSE;
+			case MEDIC:
+				return Assets.Splashes.MEDIC;
 		}
 	}
 	
@@ -517,8 +530,8 @@ public enum HeroClass {
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_ADVENTURER);
 			case KNIGHT:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_KNIGHT);
-//			case NURSE:
-//				return Badges.isUnlocked(Badges.Badge.UNLOCK_NURSE);
+			case MEDIC:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_MEDIC);
 		}
 	}
 	

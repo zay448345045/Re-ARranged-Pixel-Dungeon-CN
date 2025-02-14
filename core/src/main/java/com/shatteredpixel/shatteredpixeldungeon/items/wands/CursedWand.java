@@ -1007,6 +1007,7 @@ public class CursedWand {
 		VERY_RARE_EFFECTS.add(new HeroShapeShift());
 		VERY_RARE_EFFECTS.add(new SuperNova());
 		VERY_RARE_EFFECTS.add(new SinkHole());
+		VERY_RARE_EFFECTS.add(new GravityChaos());
 	}
 
 	public static CursedEffect randomVeryRareEffect(){
@@ -1018,6 +1019,10 @@ public class CursedWand {
 		do {
 			effect = Random.element(VERY_RARE_EFFECTS);
 		} while (!effect.valid(origin, user, bolt, positiveOnly));
+		return effect;
+	}
+
+	public static CursedEffect chooseVeryRareEffect(CursedEffect effect, Item origin, Char user, Ballistica bolt, boolean positiveOnly) {
 		return effect;
 	}
 

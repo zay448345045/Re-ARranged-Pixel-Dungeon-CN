@@ -40,7 +40,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArmorEnhance;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FirstAidBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HeroDisguise;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invulnerability;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
@@ -78,6 +81,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MonkEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PainKiller;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PhysicalEmpower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PinCushion;
@@ -94,6 +98,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TimeStasis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Undead;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WeaponEnhance;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.adventurer.TreasureMap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Challenge;
@@ -101,6 +106,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.El
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.gunner.ReinforcedArmor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.gunner.Riot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.medic.AngelWing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.medic.HealingGenerator;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.samurai.ShadowBlade;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
@@ -330,8 +337,8 @@ public class Hero extends Char {
 			HT += buff(ElixirOfTalent.ElixirOfTalentHTBoost.class).boost();
 		}
 
-		if (hero.buff(DeathSword.MaxHPBoost.class) != null) {
-			HT += hero.buff(DeathSword.MaxHPBoost.class).HTBonus();
+		if (buff(DeathSword.MaxHPBoost.class) != null) {
+			HT += buff(DeathSword.MaxHPBoost.class).HTBonus();
 		}
 		
 		if (boostHP){
@@ -775,6 +782,18 @@ public class Hero extends Char {
 			evasion *= Math.pow(1.2f, belongings.getItem(KnightsShield.class).buffedLvl()) * RingOfArcana.enchantPowerMultiplier(this);
 		}
 
+		if (hero.hasTalent(Talent.BREAKTHROUGH)) {
+			int debuffs = 0;
+			for (Buff b : hero.buffs()) {
+				if (Buff.isDebuff(b)) {
+					debuffs++;
+				}
+			}
+			if (debuffs > 0) {
+				evasion += defenseSkill * (0.9f+0.3f*hero.pointsInTalent(Talent.BREAKTHROUGH));
+			}
+		}
+
 		return Math.round(evasion);
 	}
 
@@ -975,6 +994,10 @@ public class Hero extends Char {
 				&& hero.STR() > hero.belongings.armor.STRReq()) {
 			int aEnc = hero.STR() - hero.belongings.armor.STRReq();
 			speed *= Math.pow(1+0.03f*hero.pointsInTalent(Talent.PILOTING), aEnc);
+		}
+
+		if (hero.buff(AngelWing.AngelWingBuff.class) != null) {
+			speed *= 3f;
 		}
 
 		speed = AscensionChallenge.modifyHeroSpeed(speed);
@@ -1503,7 +1526,7 @@ public class Hero extends Char {
 			int door = Dungeon.level.map[doorCell];
 			
 			if (door == Terrain.LOCKED_DOOR
-					&& Notes.keyCount(new IronKey(Dungeon.depth)) > 0) {
+					&& Notes.keyCount(new IronKey(Dungeon.depth, Dungeon.branch)) > 0) {
 				
 				hasKey = true;
 				
@@ -2151,6 +2174,11 @@ public class Hero extends Char {
 		}
 
 		//attacking procs
+		HealingGenerator.RegenBuff regenBuff = hero.buff(HealingGenerator.RegenBuff.class);
+		if (regenBuff != null) {
+			regenBuff.attackProc();
+		}
+
 		if (hero.hasTalent(Talent.BAYONET) && hero.buff(ReinforcedArmor.ReinforcedArmorTracker.class) != null){
 			if (wep instanceof Gun) {
 				Buff.affect( enemy, Bleeding.class ).set( 4 + hero.pointsInTalent(Talent.BAYONET));
@@ -2211,6 +2239,10 @@ public class Hero extends Char {
 			if (Random.Float() < 0.05f * hero.pointsInTalent(Talent.BULLET_COLLECT)) {
 				((Gun)hero.belongings.attackingWeapon()).manualReload(1, true);
 			}
+		}
+
+		if (hero.buff(WeaponEnhance.class) != null) {
+			hero.buff(WeaponEnhance.class).attackProc();
 		}
 
 		if (Dungeon.isChallenged(Challenges.MUTATION) //돌연변이 챌린지 활성화 시
@@ -2357,10 +2389,27 @@ public class Hero extends Char {
 			hero.buff(Pray.Praying.class).defenseProc(enemy, damage);
 		}
 
+		if (hero.subClass == HeroSubClass.THERAPIST) {
+			if (buff(FirstAidBuff.FirstAidBuffCooldown.class) == null) {
+				//방어력 적용 전 데미지 기준
+				Buff.affect(this, FirstAidBuff.class).set(damage);
+			}
+		}
+
 		if (Dungeon.isChallenged(Challenges.FATIGUE)) {
 			Buff.affect(this, Fatigue.class).hit(false);
 		}
-		
+
+		if (buff(HorseRiding.class) != null) {
+			buff(HorseRiding.class).onDamage(damage);
+		}
+
+		if (buff(ArmorEnhance.class) != null) {
+			buff(ArmorEnhance.class).defenseProc();
+		}
+
+		damage = Talent.onDefenseProc(this, enemy, damage);
+
 		return super.defenseProc( enemy, damage );
 	}
 	
@@ -2395,6 +2444,10 @@ public class Hero extends Char {
 			//and to monk meditate damage reduction
 			if (buff(MonkEnergy.MonkAbility.Meditate.MeditateResistance.class) != null){
 				dmg *= 0.2f;
+			}
+			//고통 저항 버프 효과
+			if (buff(PainKiller.class) != null) {
+				dmg *= 0.5f;
 			}
 		}
 
@@ -2481,10 +2534,6 @@ public class Hero extends Char {
 				interrupt();
 				damageInterrupt = true;
 			}
-		}
-
-		if (buff(HorseRiding.class) != null) {
-			buff(HorseRiding.class).onDamage(dmg);
 		}
 	}
 	
@@ -3281,7 +3330,7 @@ public class Hero extends Char {
 			if (Dungeon.level.distance(pos, doorCell) <= 1) {
 				boolean hasKey = true;
 				if (door == Terrain.LOCKED_DOOR) {
-					hasKey = Notes.remove(new IronKey(Dungeon.depth));
+					hasKey = Notes.remove(new IronKey(Dungeon.depth, Dungeon.branch));
 					if (hasKey) Level.set(doorCell, Terrain.DOOR);
 				} else if (door == Terrain.CRYSTAL_DOOR) {
 					hasKey = Notes.remove(new CrystalKey(Dungeon.depth, Dungeon.branch));
@@ -3534,5 +3583,14 @@ public class Hero extends Char {
 
 	public static interface Doom {
 		public void onDeath();
+	}
+
+	public boolean isHeroDebuffed() {
+		for (Buff b : this.buffs()) {
+			if (Buff.isDebuff(b)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -60,7 +60,7 @@ public class Gun extends MeleeWeapon {
 	private boolean riot = false;
 	private boolean shootAll = false;
 
-	public boolean doubleBarrelSpecial = false;
+	public boolean isEmpowered = false;
 
 	public enum BarrelMod {
 		NORMAL_BARREL(1, 1),
@@ -159,12 +159,28 @@ public class Gun extends MeleeWeapon {
 		}
 	}
 
+	public enum InscribeMod {
+		NORMAL(0),
+		INSCRIBED(1);
+
+		private int shotBonus;
+
+		InscribeMod(int shotBonus) {
+			this.shotBonus = shotBonus;
+		}
+
+		public int shotBonus() {
+			return shotBonus;
+		}
+	}
+
 	public BarrelMod barrelMod = BarrelMod.NORMAL_BARREL;
 	public MagazineMod magazineMod = MagazineMod.NORMAL_MAGAZINE;
 	public BulletMod bulletMod = BulletMod.NORMAL_BULLET;
 	public WeightMod weightMod = WeightMod.NORMAL_WEIGHT;
 	public AttachMod attachMod = AttachMod.NORMAL_ATTACH;
 	public EnchantMod enchantMod = EnchantMod.NORMAL_ENCHANT;
+	public InscribeMod inscribeMod = InscribeMod.NORMAL;
 
 	{
 		defaultAction = AC_SHOOT;
@@ -189,6 +205,7 @@ public class Gun extends MeleeWeapon {
 	private static final String WEIGHT_MOD = "weightMod";
 	private static final String ATTACH_MOD = "attachMod";
 	private static final String ENCHANT_MOD = "enchantMod";
+	private static final String INSCRIBE_MOD = "inscribeMod";
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
@@ -207,6 +224,7 @@ public class Gun extends MeleeWeapon {
 		bundle.put(WEIGHT_MOD, weightMod);
 		bundle.put(ATTACH_MOD, attachMod);
 		bundle.put(ENCHANT_MOD, enchantMod);
+		bundle.put(INSCRIBE_MOD, inscribeMod);
 	}
 
 	@Override
@@ -227,6 +245,7 @@ public class Gun extends MeleeWeapon {
 		weightMod = bundle.getEnum(WEIGHT_MOD, WeightMod.class);
 		attachMod = bundle.getEnum(ATTACH_MOD, AttachMod.class);
 		enchantMod = bundle.getEnum(ENCHANT_MOD, EnchantMod.class);
+		inscribeMod = bundle.getEnum(INSCRIBE_MOD, InscribeMod.class);
 	}
 
 	@Override
@@ -394,7 +413,7 @@ public class Gun extends MeleeWeapon {
 	}
 
 	public int shotPerShoot() { //발사 당 탄환의 수
-		return shotPerShoot;
+		return shotPerShoot + inscribeMod.shotBonus();
 	}
 
 	public int maxRound() { //최대 장탄수
@@ -437,6 +456,7 @@ public class Gun extends MeleeWeapon {
 		return Math.max(0, (maxRound()-round)*shotPerShoot());
 	}
 
+	@Override
 	public int tier() {
 		int t = this.tier;
 		switch (this.weightMod) {
@@ -454,16 +474,24 @@ public class Gun extends MeleeWeapon {
 
 	@Override
 	public int STRReq(int lvl) {
-		return STRReq(tier(), lvl);
+		int req = STRReq(tier(), lvl);
+		if (masteryPotionBonus){
+			req -= 2;
+		}
+		return req;
 	}
 
 	@Override
 	public int max(int lvl) {
 		int damage;
+		int talentBonus = 0;
+		if (Dungeon.hero != null && hero.hasTalent(Talent.CLOSE_COMBAT)) {
+			talentBonus += 2+2*hero.pointsInTalent(Talent.CLOSE_COMBAT);
+		}
 		if (Dungeon.hero != null) {
 			damage = 3*(tier()+1) +
 					lvl*(tier()+1) +
-					Dungeon.hero.pointsInTalent(Talent.CLOSE_COMBAT); //근접 무기로서의 최대 데미지
+					talentBonus; //근접 무기로서의 최대 데미지
 		} else {
 			damage = 3*(tier()+1) +
 					lvl*(tier()+1);
@@ -532,13 +560,7 @@ public class Gun extends MeleeWeapon {
 
 	@Override
 	public String info() {
-		//근접 무기의 설명에서 사용하는 티어를 총기용 티어로 변경
-		int baseTier = this.tier;
-		this.tier = tier();
 		String info = super.info();
-		//근접 무기 설명을 가져오고 나서 다시 원래 티어로 변경
-		this.tier = baseTier;
-
 		//근접 무기의 설명을 모두 가져옴, 여기에서 할 것은 근접 무기의 설명에 추가로 생기는 문장을 더하는 것
 		if (levelKnown) { //감정되어 있을 때
 			info += "\n\n" + Messages.get(Gun.class, "gun_desc",
@@ -551,7 +573,7 @@ public class Gun extends MeleeWeapon {
 		//가령 5.55555가 .format()안에 들어가서 .format(5.55555)라면, new DecimalFormat("#.##").format(5.55555)는 5.55라는 String 타입의 값을 반환한다.
 
 		boolean isModded = false;
-		boolean[] whatModded = {false, false, false, false, false, false};
+		boolean[] whatModded = {false, false, false, false, false, false, false};
 
 		if (barrelMod != BarrelMod.NORMAL_BARREL) {
 			whatModded[0] = true;
@@ -575,6 +597,10 @@ public class Gun extends MeleeWeapon {
 		}
 		if (enchantMod != EnchantMod.NORMAL_ENCHANT) {
 			whatModded[5] = true;
+			isModded = true;
+		}
+		if (inscribeMod != InscribeMod.NORMAL) {
+			whatModded[6] = true;
 			isModded = true;
 		}
 
@@ -612,6 +638,12 @@ public class Gun extends MeleeWeapon {
 			}
 			if (whatModded[5]) {
 				info += Messages.get(GunSmithingTool.WndMod.class, enchantMod.name());
+				if (whatModded[6]) { //이 개조 이후에 추가로 개조된 것이 있는지를 확인
+					info += ", ";
+				}
+			}
+			if (whatModded[6]) {
+				info += Messages.get(Gun.class, inscribeMod.name());
 			}
 			info += Messages.get(this, "modded_end");
 		}
