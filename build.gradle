@@ -7,7 +7,7 @@ buildscript {
         //the R8 version bundled with AGP 8.1.0+ causes crashes on very old Android versions
 
         //This affects ICS and Lollipop at least, maybe also KitKat
-        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath 'com.android.tools.build:gradle:8.12.0'
     }
 }
 
@@ -22,9 +22,9 @@ allprojects {
         appVersionCode += 59
         appVersionName += '_based_3.37.0_cn'
 
-        appJavaCompatibility = JavaVersion.VERSION_1_8
+        appJavaCompatibility = JavaVersion.VERSION_17  //1_8
 
-        appAndroidCompileSDK = 33 //compile SDK is still 33 atm as we're sticking with AGP 8.0.2
+        appAndroidCompileSDK = 35 //compile SDK is still 33 atm as we're sticking with AGP 8.0.2
         appAndroidMinSDK = 21
         appAndroidTargetSDK = 34
 
